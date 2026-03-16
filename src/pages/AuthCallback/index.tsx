@@ -2,7 +2,7 @@
  * OAuth 回调页面（iris 域名专用）
  * 路由: /auth/callback
  *
- * 处理 aegis-sdk 的 OAuth2 PKCE 回调：
+ * 处理 aegis-ts 的 OAuth2 PKCE 回调：
  * 1. 从 URL 获取 code + state
  * 2. 调用 webAuth.handleRedirectCallback() 完成 token 交换
  * 3. 成功后跳转到目标页面

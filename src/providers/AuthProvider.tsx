@@ -2,12 +2,12 @@
  * Iris Auth Provider
  *
  * 仅在 iris.heliannuuthus.com 域名下启用。
- * 通过 aegis-sdk 的 WebAuth 实例管理 OAuth2 Bearer Token 认证。
+ * 通过 aegis-ts 的 WebAuth 实例管理 OAuth2 Bearer Token 认证。
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { WebAuth } from '@heliannuuthus/aegis-sdk/web';
+import { WebAuth } from '@heliannuuthus/aegis-ts/web';
 import {
   getAegisEndpoint,
   getCallbackUri,
@@ -15,7 +15,7 @@ import {
 } from '@/config/env';
 
 interface AuthContextValue {
-  /** aegis-sdk WebAuth 实例 */
+  /** aegis-ts WebAuth 实例 */
   auth: WebAuth;
   /** 是否已完成初始化检查 */
   ready: boolean;

@@ -2,7 +2,7 @@ import type { NavigateFunction } from 'react-router-dom';
 
 /**
  * 内部路由路径列表
- * 这些路径在 aegis-ui 内部跳转时使用 SPA 路由（navigate），避免整页重载
+ * 这些路径在 pallas 内部跳转时使用 SPA 路由（navigate），避免整页重载
  */
 const INTERNAL_PATHS = [
   '/authorize',
