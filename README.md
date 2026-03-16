@@ -1,6 +1,6 @@
-# Aegis UI
+# Pallas
 
-Aegis Auth UI - 认证界面应用。
+Pallas - 认证界面应用。
 
 ## 特性
 
@@ -45,7 +45,7 @@ cp .env.example .env
 ## 项目结构
 
 ```
-aegis-ui/
+pallas/
 ├── public/           # 静态资源
 ├── src/
 │   ├── pages/        # 页面组件
@@ -66,7 +66,7 @@ aegis-ui/
 
 ## 与 Aegis 服务集成
 
-Aegis UI 作为 Aegis 认证服务的前端界面，需要配合后端使用。
+Pallas 作为 Aegis 认证服务的前端界面，需要配合后端使用。
 
 ### 开发模式
 
