@@ -18,8 +18,8 @@ import EmailOTPVerify from './EmailOTPVerify';
 import WebAuthnVerify from './WebAuthnVerify';
 import styles from './index.module.scss';
 
-type VerifyMethod = 'password' | 'email_otp' | 'webauthn';
-type ViewState = 'options' | 'password' | 'email_otp' | 'webauthn';
+type VerifyMethod = 'password' | 'email-code' | 'webauthn';
+type ViewState = 'options' | 'password' | 'email-code' | 'webauthn';
 
 interface VerifyStepProps {
   email: string;
@@ -54,7 +54,7 @@ const VerifyStep = ({
   const [viewState, setViewState] = useState<ViewState>('options');
 
   const hasPassword = availableMethods.includes('password');
-  const hasEmailOTP = availableMethods.includes('email_otp');
+  const hasEmailOTP = availableMethods.includes('email-code');
 
   // 如果只有一种验证方式，直接进入
   const singleMethodView = useMemo<ViewState | null>(() => {
@@ -63,7 +63,7 @@ const VerifyStep = ({
     ).length;
     if (methodCount === 1) {
       if (hasPassword) return 'password';
-      if (hasEmailOTP) return 'email_otp';
+      if (hasEmailOTP) return 'email-code';
       if (hasWebAuthn) return 'webauthn';
     }
     return null;
@@ -133,7 +133,7 @@ const VerifyStep = ({
   }
 
   // 邮箱验证码验证
-  if (activeView === 'email_otp') {
+  if (activeView === 'email-code') {
     return (
       <EmailOTPVerify
         email={email}
@@ -198,7 +198,7 @@ const VerifyStep = ({
             size="large"
             block
             icon={<MailOutlined style={{ fontSize: 16, marginRight: 8 }} />}
-            onClick={() => setViewState('email_otp')}
+            onClick={() => setViewState('email-code')}
             style={optionButtonStyle}
           >
             验证码登录

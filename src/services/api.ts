@@ -131,7 +131,7 @@ export const initiateChallenge = async (
 /**
  * 继续 Challenge（提交验证）
  * @param challengeId Challenge ID（路径参数）
- * @param data 验证数据（{ type, proof }）— type 必填：前置条件时为 connection 名（如 "captcha"），主验证时为 channel_type 名（如 "email_otp"）
+ * @param data 验证数据（{ type, proof }）— type 必填：前置条件时为 connection 名（如 "captcha"），主验证时为 channel_type 名（如 "email-code"）
  */
 export const continueChallenge = async (
   challengeId: string,

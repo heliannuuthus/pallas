@@ -76,7 +76,7 @@ const EmailOTPVerify = ({
         client_id: authContext.application.app_id,
         audience: CHALLENGE_AUDIENCE,
         type: 'staff:verify',
-        channel_type: 'email_otp',
+        channel_type: 'email-code',
         channel: email,
       });
 
@@ -91,7 +91,7 @@ const EmailOTPVerify = ({
       } else {
         setEmailOTPChallenge({
           challenge_id: challengeResponse.challenge_id,
-          type: 'email_otp',
+          type: 'email-code',
           hint: `验证码已发送到 ${email}`,
           retry_after: challengeResponse.retry_after ?? DEFAULT_RETRY_AFTER,
           connection: 'staff',
@@ -107,7 +107,7 @@ const EmailOTPVerify = ({
         if (info?.challengeId) {
           setEmailOTPChallenge({
             challenge_id: info.challengeId,
-            type: 'email_otp',
+            type: 'email-code',
             hint: `验证码发送过于频繁，请 ${retryAfter} 秒后重试`,
             retry_after: retryAfter,
             connection: 'staff',
@@ -141,7 +141,7 @@ const EmailOTPVerify = ({
 
       setEmailOTPChallenge({
         challenge_id: captchaConfig.challengeId,
-        type: 'email_otp',
+        type: 'email-code',
         hint: `验证码发送中...`,
         retry_after: DEFAULT_RETRY_AFTER,
         connection: 'staff',
@@ -195,7 +195,7 @@ const EmailOTPVerify = ({
         client_id: authContext.application.app_id,
         audience: CHALLENGE_AUDIENCE,
         type: 'staff:verify',
-        channel_type: 'email_otp',
+        channel_type: 'email-code',
         channel: email,
       });
 
@@ -210,7 +210,7 @@ const EmailOTPVerify = ({
       } else {
         setEmailOTPChallenge({
           challenge_id: challengeResponse.challenge_id,
-          type: 'email_otp',
+          type: 'email-code',
           hint: `验证码已发送到 ${email}`,
           retry_after: challengeResponse.retry_after ?? DEFAULT_RETRY_AFTER,
           connection: 'staff',
@@ -243,7 +243,7 @@ const EmailOTPVerify = ({
         const verifyResponse = await continueChallenge(
           emailOTPChallenge.challenge_id,
           {
-            type: 'email_otp',
+            type: 'email-code',
             proof: code,
           }
         );
@@ -265,7 +265,7 @@ const EmailOTPVerify = ({
 
         if (verifyResponse.challenge_token) {
           const delegateResponse = await login({
-            connection: 'email_otp',
+            connection: 'email-code',
             proof: verifyResponse.challenge_token,
           });
 

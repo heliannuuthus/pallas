@@ -14,7 +14,7 @@
 | 字段 | 含义 | 示例 |
 |------|------|------|
 | **Strategy** | 基础登录策略 | `password` |
-| **Delegate** | 可替代主认证的独立验证方式 | `email_otp`, `webauthn` |
+| **Delegate** | 可替代主认证的独立验证方式 | `email-code`, `webauthn` |
 
 用户可以**任选其一**完成验证：使用 Strategy（如密码）或使用 Delegate 中的任意一种方式。Strategy 和 Delegate 是同级替代关系。
 
@@ -26,7 +26,7 @@
     {
       "connection": "staff",
       "strategy": ["password"],
-      "delegate": ["email_otp", "webauthn"],
+      "delegate": ["email-code", "webauthn"],
       "require": ["captcha"]
     }
   ],
@@ -38,7 +38,7 @@
     }
   ],
   "delegated": [
-    { "connection": "email_otp" },
+    { "connection": "email-code" },
     { "connection": "webauthn", "identifier": "aegis.example.com" }
   ]
 }
@@ -60,12 +60,12 @@
 │          │                                                          │
 │          └─→ Delegate（来自 delegate）                                │
 │              │                                                      │
-│              ├─→ email_otp:                                         │
+│              ├─→ email-code:                                         │
 │              │   ┌──────────────────────────────────────┐           │
 │              │   │ 1. POST /challenge                   │           │
 │              │   │    { client_id, audience,             │           │
 │              │   │      type: "login",                  │           │
-│              │   │      channel_type: "email_otp",      │           │
+│              │   │      channel_type: "email-code",      │           │
 │              │   │      channel: "user@example.com" }   │           │
 │              │   │    → { challenge_id, required? }     │           │
 │              │   │                                      │           │
