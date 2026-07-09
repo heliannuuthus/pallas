@@ -365,14 +365,20 @@ export interface MFAStatusResponse {
 export interface SetupMFARequest {
   /** MFA 类型 */
   type: 'totp' | 'webauthn' | 'passkey';
-  /** 操作阶段（WebAuthn 专用） */
-  action?: 'begin' | 'finish';
   /** 应用名称（TOTP 专用） */
   app_name?: string;
-  /** Challenge ID（WebAuthn finish 阶段） */
-  challenge_id?: string;
-  /** WebAuthn attestation 数据（finish 阶段） */
-  [key: string]: unknown;
+}
+
+/**
+ * 完成 MFA 绑定请求
+ */
+export interface CompleteMFARequest {
+  /** MFA 类型 */
+  type: 'totp' | 'webauthn' | 'passkey';
+  /** TOTP 验证码 */
+  code?: string;
+  /** WebAuthn attestation 数据 */
+  credential?: WebAuthnAttestationResponse;
 }
 
 /**
@@ -380,7 +386,7 @@ export interface SetupMFARequest {
  */
 export interface SetupTOTPResponse {
   type: 'totp';
-  credential_id: number;
+  uid: string;
   secret: string;
   otpauth_uri: string;
 }
@@ -390,9 +396,8 @@ export interface SetupTOTPResponse {
  */
 export interface SetupWebAuthnBeginResponse {
   type: 'webauthn' | 'passkey';
-  action: 'begin';
   options: PublicKeyCredentialCreationOptions;
-  challenge_id: string;
+  uid: string;
 }
 
 /**
@@ -400,37 +405,8 @@ export interface SetupWebAuthnBeginResponse {
  */
 export interface SetupWebAuthnFinishResponse {
   type: 'webauthn' | 'passkey';
-  action: 'finish';
   success: boolean;
   credential_id: string;
-}
-
-/**
- * 验证 MFA 请求
- */
-export interface VerifyMFARequest {
-  /** MFA 类型 */
-  type: 'totp' | 'webauthn' | 'passkey';
-  /** 操作阶段（WebAuthn 专用） */
-  action?: 'begin' | 'finish';
-  /** TOTP 验证码 */
-  code?: string;
-  /** 凭证 ID（TOTP 确认时） */
-  credential_id?: number;
-  /** 是否为首次确认（TOTP） */
-  confirm?: boolean;
-  /** Challenge ID（WebAuthn finish 阶段） */
-  challenge_id?: string;
-}
-
-/**
- * 验证 MFA 响应 - WebAuthn Begin
- */
-export interface VerifyWebAuthnBeginResponse {
-  type: 'webauthn' | 'passkey';
-  action: 'begin';
-  options: PublicKeyCredentialRequestOptions;
-  challenge_id: string;
 }
 
 /**
@@ -466,6 +442,10 @@ export interface Identity {
 export interface UpdateProfileRequest {
   nickname?: string;
   picture?: string;
+  email?: string;
+  phone?: string;
+  old_password?: string;
+  password?: string;
 }
 
 // ==================== 账户关联 ====================

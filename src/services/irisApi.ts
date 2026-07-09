@@ -11,12 +11,11 @@ import type {
   UserProfile,
   UpdateProfileRequest,
   MFAStatusResponse,
+  CompleteMFARequest,
   SetupMFARequest,
   SetupTOTPResponse,
   SetupWebAuthnBeginResponse,
   SetupWebAuthnFinishResponse,
-  VerifyMFARequest,
-  VerifyWebAuthnBeginResponse,
   UpdateMFARequest,
   DeleteMFARequest,
   Identity,
@@ -92,17 +91,16 @@ export async function getMFAStatus(auth: WebAuth): Promise<MFAStatusResponse> {
 export async function setupMFA(
   auth: WebAuth,
   data: SetupMFARequest
-): Promise<
-  SetupTOTPResponse | SetupWebAuthnBeginResponse | SetupWebAuthnFinishResponse
-> {
+): Promise<SetupTOTPResponse | SetupWebAuthnBeginResponse> {
   return request(auth, 'POST', '/mfa', data);
 }
 
-export async function verifyMFA(
+export async function completeMFA(
   auth: WebAuth,
-  data: VerifyMFARequest
-): Promise<{ success: boolean } | VerifyWebAuthnBeginResponse> {
-  return request(auth, 'PUT', '/mfa', data);
+  uid: string,
+  data: CompleteMFARequest
+): Promise<{ success: boolean } | SetupWebAuthnFinishResponse> {
+  return request(auth, 'POST', `/mfa/${encodeURIComponent(uid)}`, data);
 }
 
 export async function updateMFA(

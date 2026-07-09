@@ -6,7 +6,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { getMFAStatus, setupMFA, verifyMFA, deleteMFA } from '@/services/api';
+import { getMFAStatus, setupMFA, completeMFA, deleteMFA } from '@/services/api';
 import {
   convertAttestationResponse,
   convertToPublicKeyCreationOptions,
@@ -20,6 +20,12 @@ import type {
   SetupWebAuthnBeginResponse,
 } from '@/types';
 import styles from './SecuritySettings.module.scss';
+
+const formatCredentialId = (credentialId?: string): string => {
+  if (!credentialId) return '';
+  if (credentialId.length <= 20) return credentialId;
+  return `${credentialId.slice(0, 12)}...${credentialId.slice(-6)}`;
+};
 
 const SecuritySettings = () => {
   const [loading, setLoading] = useState(true);
@@ -72,11 +78,9 @@ const SecuritySettings = () => {
 
     try {
       setTotpLoading(true);
-      await verifyMFA({
+      await completeMFA(totpSetup.uid, {
         type: 'totp',
-        credential_id: totpSetup.credential_id,
         code: totpCode,
-        confirm: true,
       });
       message.success('TOTP 绑定成功');
       setTotpModalVisible(false);
@@ -119,14 +123,12 @@ const SecuritySettings = () => {
       // 1. 开始注册
       const beginResponse = await setupMFA({
         type: 'webauthn',
-        action: 'begin',
       });
       if (beginResponse.type !== 'webauthn' || !('options' in beginResponse)) {
         throw new Error('Invalid response');
       }
 
-      const { options, challenge_id } =
-        beginResponse as SetupWebAuthnBeginResponse;
+      const { options, uid } = beginResponse as SetupWebAuthnBeginResponse;
 
       // 2. 转换选项格式并调用 WebAuthn API
       const publicKeyOptions = convertToPublicKeyCreationOptions(options);
@@ -142,10 +144,8 @@ const SecuritySettings = () => {
       const attestationResponse = convertAttestationResponse(
         credential as PublicKeyCredential
       );
-      const finishResponse = await setupMFA({
+      const finishResponse = await completeMFA(uid, {
         type: 'webauthn',
-        action: 'finish',
-        challenge_id,
         credential: attestationResponse,
       });
 
@@ -282,7 +282,9 @@ const SecuritySettings = () => {
                     <p className={styles.credentialType}>
                       {cred.type === 'passkey' ? 'Passkey' : '安全密钥'}
                     </p>
-                    <p className={styles.credentialId}>{cred.credential_id}</p>
+                    <p className={styles.credentialId}>
+                      {formatCredentialId(cred.credential_id)}
+                    </p>
                     {cred.last_used_at && (
                       <p className={styles.lastUsed}>
                         最后使用: {new Date(cred.last_used_at).toLocaleString()}
