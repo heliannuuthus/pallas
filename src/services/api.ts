@@ -8,6 +8,8 @@ import type {
   CreateChallengeResponse,
   VerifyChallengeRequest,
   VerifyChallengeResponse,
+  IDPInitiateRequest,
+  IDPInitiateResponse,
   AuthError,
   AuthContext,
   UserProfile,
@@ -140,6 +142,16 @@ export const continueChallenge = async (
     `/challenge/${encodeURIComponent(challengeId)}`,
     data
   );
+  return response.data;
+};
+
+/**
+ * 发起 IDP 认证入口（Passkey ceremony / OAuth redirect / 小程序动作等）
+ */
+export const initiateIDP = async (
+  data: IDPInitiateRequest
+): Promise<IDPInitiateResponse> => {
+  const response = await api.post<IDPInitiateResponse>('/idps', data);
   return response.data;
 };
 
