@@ -193,6 +193,36 @@ export interface VerifyChallengeResponse {
 }
 
 /**
+ * IDP 认证入口请求
+ */
+export interface IDPInitiateRequest {
+  /** Connection 标识 */
+  connection: string;
+  /** 登录策略（可选） */
+  strategy?: string;
+}
+
+/**
+ * IDP 认证入口响应
+ */
+export interface IDPInitiateResponse {
+  /** Connection 标识 */
+  connection: string;
+  /** 入口模式（webauthn / redirect / client_action 等） */
+  mode: string;
+  /** 认证会话 ID（如 Passkey/WebAuthn ceremony uid） */
+  uid?: string;
+  /** 跳转 URL */
+  url?: string;
+  /** 客户端动作名 */
+  action?: string;
+  /** 客户端动作参数 */
+  params?: Record<string, unknown>;
+  /** WebAuthn 等协议选项 */
+  options?: Record<string, unknown>;
+}
+
+/**
  * Challenge 响应（登录返回的，用于 ChallengeVerify 组件渲染）
  */
 export interface ChallengeResponse {
@@ -224,6 +254,8 @@ export interface LoginRequest {
   strategy?: string;
   /** 身份主体（用户名/邮箱/手机号/OpenID...） */
   principal?: string;
+  /** 认证会话 ID（如 Passkey/WebAuthn ceremony uid） */
+  uid?: string;
   /** 凭证证明（OAuth code / captcha token / OTP 等） */
   proof?: unknown;
 }

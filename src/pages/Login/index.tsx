@@ -8,7 +8,7 @@ import {
   getAuthContext,
   login,
   continueChallenge,
-  initiateChallenge,
+  initiateIDP,
   isRedirectAction,
 } from '@/services/api';
 import {
@@ -18,7 +18,6 @@ import {
   isRateLimitError,
   getRateLimitData,
 } from '@/utils/error';
-import { CHALLENGE_AUDIENCE } from '@/config/env';
 import { smartNavigate } from '@/utils/navigation';
 import { passkeyUserCache } from '@/utils/passkeyCache';
 import type {
@@ -352,52 +351,32 @@ const LoginPage = () => {
   // 辅助函数：执行 Passkey WebAuthn 登录流程
   const performPasskeyLogin = useCallback(
     async (options?: { signal?: AbortSignal; conditional?: boolean }) => {
-      if (
-        !authContext?.application?.app_id ||
-        !authContext?.service?.service_id
-      ) {
+      if (!authContext) {
         throw new Error('认证上下文不完整');
       }
 
-      // 1. 创建 WebAuthn challenge（后端返回 challenge_id + options）
-      const challengeResp = await initiateChallenge({
-        client_id: authContext.application.app_id,
-        audience: CHALLENGE_AUDIENCE,
-        type: 'passkey:verify',
-        channel_type: 'webauthn',
-        channel: '',
-      });
+      // 1. 初始化 Passkey IDP 入口（后端返回 uid + options）
+      const entry = await initiateIDP({ connection: 'passkey' });
 
       // 2. 转换 options 并执行 WebAuthn assertion
-      // 注意：后端需要在 CreateChallengeResponse 中返回 WebAuthn options
-      // 当前通过 challenge_id 获取 options 可能需要后端额外接口支持
-      if (!challengeResp.options)
-        throw new Error('WebAuthn options missing from challenge response');
+      if (entry.mode !== 'webauthn')
+        throw new Error(`Unsupported passkey entry mode: ${entry.mode}`);
+      if (!entry.uid) throw new Error('WebAuthn uid missing from idp response');
+      if (!entry.options)
+        throw new Error('WebAuthn options missing from idp response');
       const publicKeyOptions = convertToPublicKeyOptions(
-        challengeResp.options as unknown as WebAuthnRequestOptions
+        entry.options as unknown as WebAuthnRequestOptions
       );
       const credential = options?.conditional
         ? await performConditionalMediation(publicKeyOptions, options.signal!)
         : await performWebAuthnAssertion(publicKeyOptions);
       const assertionResponse = convertAssertionResponse(credential);
 
-      // 3. 验证凭证（type = webauthn）
-      const verifyResponse = await continueChallenge(
-        challengeResp.challenge_id,
-        {
-          type: 'webauthn',
-          proof: JSON.stringify(assertionResponse),
-        }
-      );
-
-      if (!verifyResponse.verified || !verifyResponse.challenge_token) {
-        throw new Error('验证失败');
-      }
-
-      // 4. 使用 challenge_token 完成登录
+      // 3. 使用 WebAuthn assertion 直接完成 Passkey IDP 登录
       const loginResponse = await login({
         connection: 'passkey',
-        proof: verifyResponse.challenge_token,
+        uid: entry.uid,
+        proof: JSON.stringify(assertionResponse),
       });
 
       return loginResponse;
