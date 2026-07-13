@@ -75,7 +75,7 @@ const StaffLogin = ({
 
   // 检查各种验证方式是否可用
   const hasPassword = (connection.strategy ?? []).includes('password');
-  const hasEmailOTP = availableDelegate.includes('email_otp');
+  const hasEmailOTP = availableDelegate.includes('email-code');
   // WebAuthn delegate（delegate 中的 webauthn），作为可替代主认证的独立路径
   const hasDelegateWebAuthn =
     availableDelegate.includes('webauthn') && webAuthnSupported;
@@ -86,9 +86,9 @@ const StaffLogin = ({
 
   // 可用的验证方式列表
   const availableMethods = useMemo(() => {
-    const methods: ('password' | 'email_otp' | 'webauthn')[] = [];
+    const methods: ('password' | 'email-code' | 'webauthn')[] = [];
     if (hasPassword) methods.push('password');
-    if (hasEmailOTP) methods.push('email_otp');
+    if (hasEmailOTP) methods.push('email-code');
     if (hasDelegateWebAuthn) methods.push('webauthn');
     return methods;
   }, [hasPassword, hasEmailOTP, hasDelegateWebAuthn]);

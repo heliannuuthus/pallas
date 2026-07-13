@@ -16,7 +16,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import {
   getMFAStatus,
   setupMFA,
-  verifyMFA,
+  completeMFA,
   deleteMFA,
 } from '@/services/irisApi';
 import {
@@ -32,6 +32,12 @@ import type {
   SetupWebAuthnBeginResponse,
 } from '@/types';
 import styles from './SecuritySettings.module.scss';
+
+const formatCredentialId = (credentialId?: string): string => {
+  if (!credentialId) return '';
+  if (credentialId.length <= 20) return credentialId;
+  return `${credentialId.slice(0, 12)}...${credentialId.slice(-6)}`;
+};
 
 const IrisSecuritySettings = () => {
   const { auth } = useAuth();
@@ -81,11 +87,9 @@ const IrisSecuritySettings = () => {
     if (!totpSetup || !totpCode) return;
     try {
       setTotpLoading(true);
-      await verifyMFA(auth, {
+      await completeMFA(auth, totpSetup.uid, {
         type: 'totp',
-        credential_id: totpSetup.credential_id,
         code: totpCode,
-        confirm: true,
       });
       message.success('TOTP 绑定成功');
       setTotpModalVisible(false);
@@ -124,13 +128,11 @@ const IrisSecuritySettings = () => {
       setWebauthnLoading(true);
       const beginResponse = await setupMFA(auth, {
         type: 'webauthn',
-        action: 'begin',
       });
       if (beginResponse.type !== 'webauthn' || !('options' in beginResponse)) {
         throw new Error('Invalid response');
       }
-      const { options, challenge_id } =
-        beginResponse as SetupWebAuthnBeginResponse;
+      const { options, uid } = beginResponse as SetupWebAuthnBeginResponse;
       const publicKeyOptions = convertToPublicKeyCreationOptions(options);
       const credential = await navigator.credentials.create({
         publicKey: publicKeyOptions,
@@ -140,10 +142,8 @@ const IrisSecuritySettings = () => {
       const attestationResponse = convertAttestationResponse(
         credential as PublicKeyCredential
       );
-      const finishResponse = await setupMFA(auth, {
+      const finishResponse = await completeMFA(auth, uid, {
         type: 'webauthn',
-        action: 'finish',
-        challenge_id,
         credential: attestationResponse,
       });
 
@@ -277,7 +277,9 @@ const IrisSecuritySettings = () => {
                     <p className={styles.credentialType}>
                       {cred.type === 'passkey' ? 'Passkey' : '安全密钥'}
                     </p>
-                    <p className={styles.credentialId}>{cred.credential_id}</p>
+                    <p className={styles.credentialId}>
+                      {formatCredentialId(cred.credential_id)}
+                    </p>
                     {cred.last_used_at && (
                       <p className={styles.lastUsed}>
                         最后使用: {new Date(cred.last_used_at).toLocaleString()}

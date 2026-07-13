@@ -13,12 +13,11 @@ import type {
   UserProfile,
   UpdateProfileRequest,
   MFAStatusResponse,
+  CompleteMFARequest,
   SetupMFARequest,
   SetupTOTPResponse,
   SetupWebAuthnBeginResponse,
   SetupWebAuthnFinishResponse,
-  VerifyMFARequest,
-  VerifyWebAuthnBeginResponse,
   UpdateMFARequest,
   DeleteMFARequest,
   Identity,
@@ -131,7 +130,7 @@ export const initiateChallenge = async (
 /**
  * 继续 Challenge（提交验证）
  * @param challengeId Challenge ID（路径参数）
- * @param data 验证数据（{ type, proof }）— type 必填：前置条件时为 connection 名（如 "captcha"），主验证时为 channel_type 名（如 "email_otp"）
+ * @param data 验证数据（{ type, proof }）— type 必填：前置条件时为 connection 名（如 "captcha"），主验证时为 channel_type 名（如 "email-code"）
  */
 export const continueChallenge = async (
   challengeId: string,
@@ -160,7 +159,7 @@ export const getProfile = async (): Promise<UserProfile> => {
 export const updateProfile = async (
   data: UpdateProfileRequest
 ): Promise<UserProfile> => {
-  const response = await api.put<UserProfile>('/user/profile', data);
+  const response = await api.patch<UserProfile>('/user/profile', data);
   return response.data;
 };
 
@@ -177,20 +176,19 @@ export const getMFAStatus = async (): Promise<MFAStatusResponse> => {
  */
 export const setupMFA = async (
   data: SetupMFARequest
-): Promise<
-  SetupTOTPResponse | SetupWebAuthnBeginResponse | SetupWebAuthnFinishResponse
-> => {
+): Promise<SetupTOTPResponse | SetupWebAuthnBeginResponse> => {
   const response = await api.post('/user/mfa', data);
   return response.data;
 };
 
 /**
- * 验证 MFA
+ * 完成 MFA 绑定
  */
-export const verifyMFA = async (
-  data: VerifyMFARequest
-): Promise<{ success: boolean } | VerifyWebAuthnBeginResponse> => {
-  const response = await api.put('/user/mfa', data);
+export const completeMFA = async (
+  uid: string,
+  data: CompleteMFARequest
+): Promise<{ success: boolean } | SetupWebAuthnFinishResponse> => {
+  const response = await api.post(`/user/mfa/${encodeURIComponent(uid)}`, data);
   return response.data;
 };
 

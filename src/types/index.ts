@@ -8,10 +8,10 @@ export type ConnectionType = 'idp' | 'vchan' | 'factor';
  *
  * 字段说明：
  * - type: 连接类型（idp / vchan / factor）
- * - connection: 标识（github, google, wechat-mp, user, staff, email_otp, captcha...）
+ * - connection: 标识（github, google, wechat-mp, user, staff, email-code, captcha...）
  * - identifier: 公开标识（client_id / site_key / rp_id）
  * - strategy: 登录策略（仅 user/staff 需要：password, webauthn）
- * - delegate: 可替代主认证的独立验证方式（email_otp, totp, webauthn），通过 Challenge 完成后以 ChallengeToken 作为 proof 登录
+ * - delegate: 可替代主认证的独立验证方式（email-code, totp, webauthn），通过 Challenge 完成后以 ChallengeToken 作为 proof 登录
  * - require: 前置条件（captcha），登录前必须全部通过
  */
 export interface Connection {
@@ -23,7 +23,7 @@ export interface Connection {
   identifier?: string;
   /** 登录策略（user/staff: password, webauthn; captcha: turnstile） */
   strategy?: string[];
-  /** 可替代主认证的独立验证方式（email_otp, totp, webauthn） */
+  /** 可替代主认证的独立验证方式（email-code, totp, webauthn） */
   delegate?: string[];
   /** 前置条件（captcha） */
   require?: string[];
@@ -40,11 +40,11 @@ export type ConnectionsMap = Partial<Record<ConnectionType, Connection[]>>;
 
 /** Channel Type（验证方式） */
 export type ChannelType =
-  | 'email_otp'
+  | 'email-code'
   | 'totp'
   | 'webauthn'
-  | 'sms_otp'
-  | 'tg_otp'
+  | 'sms-code'
+  | 'telegram-code'
   | 'wechat-mp'
   | 'alipay-mp';
 
@@ -172,7 +172,7 @@ export interface CreateChallengeResponse {
  * 验证 Challenge 请求
  */
 export interface VerifyChallengeRequest {
-  /** 当前提交的验证类型（必填）：前置条件时为 connection 名（如 "captcha"），主验证时为 channel_type 名（如 "email_otp"） */
+  /** 当前提交的验证类型（必填）：前置条件时为 connection 名（如 "captcha"），主验证时为 channel_type 名（如 "email-code"） */
   type: string;
   /** 验证方式（如 "turnstile"），前置条件验证时必填 */
   strategy?: string;
@@ -198,7 +198,7 @@ export interface VerifyChallengeResponse {
 export interface ChallengeResponse {
   /** Challenge ID */
   challenge_id: string;
-  /** Challenge 类型（email_otp, tg_otp, totp...） */
+  /** Challenge 类型（email-code, telegram-code, totp...） */
   type: string;
   /** 提示信息（如：验证码已发送到 h***@gmail.com） */
   hint?: string;
@@ -365,14 +365,20 @@ export interface MFAStatusResponse {
 export interface SetupMFARequest {
   /** MFA 类型 */
   type: 'totp' | 'webauthn' | 'passkey';
-  /** 操作阶段（WebAuthn 专用） */
-  action?: 'begin' | 'finish';
   /** 应用名称（TOTP 专用） */
   app_name?: string;
-  /** Challenge ID（WebAuthn finish 阶段） */
-  challenge_id?: string;
-  /** WebAuthn attestation 数据（finish 阶段） */
-  [key: string]: unknown;
+}
+
+/**
+ * 完成 MFA 绑定请求
+ */
+export interface CompleteMFARequest {
+  /** MFA 类型 */
+  type: 'totp' | 'webauthn' | 'passkey';
+  /** TOTP 验证码 */
+  code?: string;
+  /** WebAuthn attestation 数据 */
+  credential?: WebAuthnAttestationResponse;
 }
 
 /**
@@ -380,7 +386,7 @@ export interface SetupMFARequest {
  */
 export interface SetupTOTPResponse {
   type: 'totp';
-  credential_id: number;
+  uid: string;
   secret: string;
   otpauth_uri: string;
 }
@@ -390,9 +396,8 @@ export interface SetupTOTPResponse {
  */
 export interface SetupWebAuthnBeginResponse {
   type: 'webauthn' | 'passkey';
-  action: 'begin';
   options: PublicKeyCredentialCreationOptions;
-  challenge_id: string;
+  uid: string;
 }
 
 /**
@@ -400,37 +405,8 @@ export interface SetupWebAuthnBeginResponse {
  */
 export interface SetupWebAuthnFinishResponse {
   type: 'webauthn' | 'passkey';
-  action: 'finish';
   success: boolean;
   credential_id: string;
-}
-
-/**
- * 验证 MFA 请求
- */
-export interface VerifyMFARequest {
-  /** MFA 类型 */
-  type: 'totp' | 'webauthn' | 'passkey';
-  /** 操作阶段（WebAuthn 专用） */
-  action?: 'begin' | 'finish';
-  /** TOTP 验证码 */
-  code?: string;
-  /** 凭证 ID（TOTP 确认时） */
-  credential_id?: number;
-  /** 是否为首次确认（TOTP） */
-  confirm?: boolean;
-  /** Challenge ID（WebAuthn finish 阶段） */
-  challenge_id?: string;
-}
-
-/**
- * 验证 MFA 响应 - WebAuthn Begin
- */
-export interface VerifyWebAuthnBeginResponse {
-  type: 'webauthn' | 'passkey';
-  action: 'begin';
-  options: PublicKeyCredentialRequestOptions;
-  challenge_id: string;
 }
 
 /**
@@ -466,6 +442,10 @@ export interface Identity {
 export interface UpdateProfileRequest {
   nickname?: string;
   picture?: string;
+  email?: string;
+  phone?: string;
+  old_password?: string;
+  password?: string;
 }
 
 // ==================== 账户关联 ====================
