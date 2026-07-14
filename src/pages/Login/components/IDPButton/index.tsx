@@ -9,7 +9,7 @@ interface IDPButtonProps {
   connection: Connection;
   loading?: boolean;
   disabled?: boolean;
-  onClick: (strategy: string) => void;
+  onClick: (strategy?: string) => void;
 }
 
 const idpNames: Record<string, string> = {
@@ -28,33 +28,6 @@ const strategyNames: Record<string, string> = {
   web: '网页登录',
   mp: '小程序',
   oa: '公众号',
-};
-
-const oauthConfigs: Record<string, { authorizeUrl: string; scope: string }> = {
-  github: {
-    authorizeUrl: 'https://github.com/login/oauth/authorize',
-    scope: 'user:email',
-  },
-  google: {
-    authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    scope: 'openid email profile',
-  },
-  wechat: {
-    authorizeUrl: 'https://open.weixin.qq.com/connect/qrconnect',
-    scope: 'snsapi_login',
-  },
-  feishu: {
-    authorizeUrl: 'https://open.feishu.cn/open-apis/authen/v1/authorize',
-    scope: '',
-  },
-  alipay: {
-    authorizeUrl: 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm',
-    scope: 'auth_user',
-  },
-  douyin: {
-    authorizeUrl: 'https://open.douyin.com/platform/oauth/connect',
-    scope: 'user_info',
-  },
 };
 
 const brandStyles: Record<
@@ -99,47 +72,6 @@ const brandStyles: Record<
     border: '#f97316',
     color: '#fff',
   },
-};
-
-const generateState = (): string => {
-  const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
-  return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
-};
-
-const getCallbackBaseUrl = (): string => {
-  return import.meta.env.VITE_API_BASE_URL || window.location.origin;
-};
-
-const buildOAuthURL = (connection: string, clientId: string): string => {
-  const config = oauthConfigs[connection];
-  if (!config || !clientId) return '';
-
-  const state = generateState();
-  sessionStorage.setItem('oauth_state', state);
-
-  const redirectUri = `${getCallbackBaseUrl()}/${connection}/callback`;
-
-  const params = new URLSearchParams({
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    scope: config.scope,
-    state: state,
-    response_type: 'code',
-  });
-
-  if (connection === 'google') {
-    params.set('access_type', 'offline');
-    params.set('prompt', 'consent');
-  }
-
-  if (connection === 'wechat') {
-    params.set('appid', clientId);
-    params.delete('client_id');
-    return `${config.authorizeUrl}?${params.toString()}#wechat_redirect`;
-  }
-
-  return `${config.authorizeUrl}?${params.toString()}`;
 };
 
 const IDPIcons: Record<string, React.FC<{ style?: React.CSSProperties }>> = {
@@ -213,24 +145,14 @@ const IDPButton = ({
   disabled,
   onClick,
 }: IDPButtonProps) => {
-  const { connection: connName, strategy = [], identifier } = connection;
+  const { connection: connName, strategy = [] } = connection;
 
   const displayName = idpNames[connName] || connName;
   const IconComponent = IDPIcons[connName];
   const brand = brandStyles[connName] || brandStyles.google;
 
-  const isOAuth = !!oauthConfigs[connName] && !!identifier;
-
   const handleClick = (selectedStrategy?: string) => {
-    if (isOAuth && identifier) {
-      const authURL = buildOAuthURL(connName, identifier);
-      if (authURL) {
-        // eslint-disable-next-line react-hooks/immutability
-        window.location.href = authURL;
-        return;
-      }
-    }
-    onClick(selectedStrategy || connName);
+    onClick(selectedStrategy);
   };
 
   const buttonStyle = useMemo<React.CSSProperties>(

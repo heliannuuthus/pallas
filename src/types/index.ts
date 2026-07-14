@@ -208,8 +208,6 @@ export interface IDPInitiateRequest {
 export interface IDPInitiateResponse {
   /** Connection 标识 */
   connection: string;
-  /** 入口模式（webauthn / redirect / client_action 等） */
-  mode: string;
   /** 认证会话 ID（如 Passkey/WebAuthn ceremony uid） */
   uid?: string;
   /** 跳转 URL */
