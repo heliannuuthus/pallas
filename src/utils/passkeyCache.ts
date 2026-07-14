@@ -1,14 +1,20 @@
+import type { DomainID } from '@/types';
+
 /**
  * Passkey 用户缓存管理
  *
  * 用于 Welcome Back 遮盖层的本地缓存。
  * 缓存最近一次注册 Passkey 的用户信息，以实现快速回访登录体验。
  *
- * 缓存策略：同一浏览器同一站点仅缓存最近一次设置 Passkey 的用户提示信息。
+ * 缓存策略：每个业务域仅缓存最近一次设置 Passkey 的用户提示信息。
  * 缓存仅用于 UI 提示，不作为认证依据。
  */
 
-const CACHE_KEY = 'heliannuuthus@aegis:passkey_user';
+const CACHE_KEY_PREFIX = 'aegis:passkey:';
+
+function cacheKey(domainId: DomainID): string {
+  return `${CACHE_KEY_PREFIX}${domainId}`;
+}
 
 /**
  * 缓存的用户信息
@@ -24,76 +30,93 @@ export interface PasskeyUserHint {
   updated_at: number;
 }
 
+type PasskeyUserHintInput = Omit<PasskeyUserHint, 'updated_at'>;
+
 /**
- * 暂存的用户信息（用于注册 Passkey 后写入缓存）
- * 在个人信息页设置，注册成功后使用
+ * 按业务域暂存的 Passkey 用户提示，注册成功后提交到 localStorage。
  */
-let pendingUserInfo: {
-  uid: string;
-  nickname: string;
-  picture?: string;
-} | null = null;
+const pendingPasskeyUserHintsByDomain = new Map<
+  DomainID,
+  PasskeyUserHintInput
+>();
+
+function isPasskeyUserHint(value: unknown): value is PasskeyUserHint {
+  if (!value || typeof value !== 'object') return false;
+  const hint = value as Partial<PasskeyUserHint>;
+  return (
+    typeof hint.uid === 'string' &&
+    typeof hint.nickname === 'string' &&
+    typeof hint.updated_at === 'number' &&
+    (hint.picture === undefined || typeof hint.picture === 'string')
+  );
+}
+
+function writePasskeyUserHint(
+  domainId: DomainID,
+  hint: PasskeyUserHintInput
+): void {
+  try {
+    const data: PasskeyUserHint = {
+      ...hint,
+      updated_at: Date.now(),
+    };
+    localStorage.setItem(cacheKey(domainId), JSON.stringify(data));
+  } catch {
+    // localStorage 不可用时静默失败
+  }
+}
 
 export const passkeyUserCache = {
   /**
    * 读取缓存的用户信息
    */
-  get(): PasskeyUserHint | null {
+  get(domainId: DomainID): PasskeyUserHint | null {
+    const key = cacheKey(domainId);
     try {
-      const raw = localStorage.getItem(CACHE_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw) as PasskeyUserHint;
-    } catch {
-      return null;
-    }
-  },
+      const raw = localStorage.getItem(key);
+      if (raw === null) return null;
 
-  /**
-   * 写入缓存
-   */
-  set(info: Omit<PasskeyUserHint, 'updated_at'>): void {
-    try {
-      const data: PasskeyUserHint = {
-        ...info,
-        updated_at: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      const value: unknown = JSON.parse(raw);
+      if (isPasskeyUserHint(value)) return value;
+
+      localStorage.removeItem(key);
+      return null;
     } catch {
-      // localStorage 不可用时静默失败
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // localStorage 不可用时静默失败
+      }
+      return null;
     }
   },
 
   /**
    * 清除缓存
    */
-  clear(): void {
+  clear(domainId: DomainID): void {
     try {
-      localStorage.removeItem(CACHE_KEY);
+      localStorage.removeItem(cacheKey(domainId));
     } catch {
       // 静默失败
     }
   },
 
   /**
-   * 暂存当前用户信息（个人信息页调用）
-   * 在用户注册 Passkey 之前调用，注册成功后自动写入缓存
+   * 暂存 Passkey 用户提示，等待注册成功后提交。
    */
-  setPendingUserInfo(info: {
-    uid: string;
-    nickname: string;
-    picture?: string;
-  }): void {
-    pendingUserInfo = info;
+  stagePasskeyUserHint(domainId: DomainID, hint: PasskeyUserHintInput): void {
+    pendingPasskeyUserHintsByDomain.set(domainId, hint);
   },
 
   /**
-   * 注册成功后写入缓存
-   * 使用之前通过 setPendingUserInfo 暂存的用户信息
+   * 注册成功后提交之前暂存的 Passkey 用户提示。
    */
-  writeAfterRegistration(): void {
-    if (pendingUserInfo) {
-      passkeyUserCache.set(pendingUserInfo);
-      pendingUserInfo = null;
+  commitPasskeyUserHint(domainId: DomainID): void {
+    const hint = pendingPasskeyUserHintsByDomain.get(domainId);
+    if (hint) {
+      writePasskeyUserHint(domainId, hint);
+      pendingPasskeyUserHintsByDomain.delete(domainId);
     }
   },
 };

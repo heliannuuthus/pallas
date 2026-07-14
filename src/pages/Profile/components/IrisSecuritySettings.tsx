@@ -24,6 +24,7 @@ import {
   convertToPublicKeyCreationOptions,
 } from '@/pages/Login/components/WebAuthn';
 import { passkeyUserCache } from '@/utils/passkeyCache';
+import { IRIS_AUTH_CONFIG } from '@/config/env';
 import { showError } from '@/utils/error';
 import type {
   MFAStatusResponse,
@@ -149,7 +150,7 @@ const IrisSecuritySettings = () => {
 
       if ('success' in finishResponse && finishResponse.success) {
         message.success('安全密钥添加成功');
-        passkeyUserCache.writeAfterRegistration();
+        passkeyUserCache.commitPasskeyUserHint(IRIS_AUTH_CONFIG.domainId);
         loadMFAStatus();
       } else {
         throw new Error('注册失败');
@@ -180,7 +181,7 @@ const IrisSecuritySettings = () => {
             (c) => c.credential_id !== credentialId
           );
           if (!remaining || remaining.length === 0) {
-            passkeyUserCache.clear();
+            passkeyUserCache.clear(IRIS_AUTH_CONFIG.domainId);
           }
           loadMFAStatus();
         } catch (error: unknown) {

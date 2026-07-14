@@ -19,6 +19,8 @@ import {
 } from '@ant-design/icons';
 import { useAuth } from '@/providers/AuthProvider';
 import { getProfile } from '@/services/irisApi';
+import { IRIS_AUTH_CONFIG } from '@/config/env';
+import { passkeyUserCache } from '@/utils/passkeyCache';
 import { showError } from '@/utils/error';
 import type { UserProfile } from '@/types';
 import styles from './UserLayout.module.scss';
@@ -64,6 +66,11 @@ const UserLayout = () => {
         setLoading(true);
         const data = await getProfile(auth);
         setProfile(data);
+        passkeyUserCache.stagePasskeyUserHint(IRIS_AUTH_CONFIG.domainId, {
+          uid: data.id,
+          nickname: data.nickname || '用户',
+          picture: data.picture,
+        });
       } catch (error: unknown) {
         showError(error);
       } finally {

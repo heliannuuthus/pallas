@@ -67,7 +67,11 @@ const LoginPage = () => {
 
   // 安全验证遮罩状态
   const [showSecurityMask, setShowSecurityMask] = useState(false);
-  const cachedUser = useMemo(() => passkeyUserCache.get(), []);
+  const authDomainId = authContext?.application?.domain_id;
+  const cachedUser = useMemo(
+    () => (authDomainId ? passkeyUserCache.get(authDomainId) : null),
+    [authDomainId]
+  );
 
   // Staff 登录步骤状态（用于控制社交登录等区块的显示）
   const [staffStep, setStaffStep] = useState<'email' | 'verify'>('email');

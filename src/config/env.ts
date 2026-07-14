@@ -36,6 +36,8 @@ export const CHALLENGE_AUDIENCE = 'iris';
 export const IRIS_AUTH_CONFIG = {
   /** 平台个人中心在 hermes 注册的 client_id */
   clientId: 'piris',
+  /** 个人中心所属域 */
+  domainId: 'platform',
   /** iris 服务的 audience 名称 */
   audience: 'iris',
   /** OAuth 默认 scopes */
