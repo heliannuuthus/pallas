@@ -89,6 +89,15 @@ const LoginPage = () => {
     }
   }, [location.state]);
 
+  // OAuth 回调错误只展示固定文案，避免把上游错误细节带回登录页。
+  useEffect(() => {
+    const oauthError = new URLSearchParams(location.search).get('oauth_error');
+    if (!oauthError) return;
+
+    message.error('第三方登录未完成，请重试');
+    navigate('/login', { replace: true });
+  }, [location.search, navigate]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -188,32 +197,21 @@ const LoginPage = () => {
     [navigate]
   );
 
-  const handleLogin = async (
-    connection: string,
-    params: {
-      strategy?: string;
-      principal?: string;
-      proof?: unknown;
-    } = {}
-  ) => {
+  const handleIDPEntry = async (connection: string, strategy?: string) => {
     setLoginLoading(true);
     setActiveConnection(connection);
 
     try {
-      const response = await login({
-        connection,
-        strategy: params.strategy,
-        principal: params.principal,
-        proof: params.proof,
-      });
-
+      const response = await initiateIDP({ connection, strategy });
       if (isRedirectAction(response)) {
         handleRedirectAction(response);
-      } else if (response.challenge) {
-        setChallenge(response.challenge);
-      } else {
-        handleLoginSuccess(response);
+        return;
       }
+      if (response.url) {
+        smartNavigate(response.url, navigate);
+        return;
+      }
+      throw new Error(`IDP ${connection} did not return a redirect`);
     } catch (error: unknown) {
       const err = error as AuthError;
       if (isFlowExpiredError(err)) {
@@ -362,9 +360,9 @@ const LoginPage = () => {
       // 1. 初始化 Passkey IDP 入口（后端返回 uid + options）
       const entry = await initiateIDP({ connection: 'passkey' });
 
+      if (isRedirectAction(entry)) return entry;
+
       // 2. 转换 options 并执行 WebAuthn assertion
-      if (entry.mode !== 'webauthn')
-        throw new Error(`Unsupported passkey entry mode: ${entry.mode}`);
       if (!entry.uid) throw new Error('WebAuthn uid missing from idp response');
       if (!entry.options)
         throw new Error('WebAuthn options missing from idp response');
@@ -668,7 +666,7 @@ const LoginPage = () => {
                       }
                       disabled={loginLoading}
                       onClick={(strategy) =>
-                        handleLogin(conn.connection, { strategy })
+                        handleIDPEntry(conn.connection, strategy)
                       }
                     />
                   ))}

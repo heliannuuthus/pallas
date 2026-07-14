@@ -150,8 +150,11 @@ export const continueChallenge = async (
  */
 export const initiateIDP = async (
   data: IDPInitiateRequest
-): Promise<IDPInitiateResponse> => {
-  const response = await api.post<IDPInitiateResponse>('/idps', data);
+): Promise<IDPInitiateResponse | RedirectAction> => {
+  const response = await api.post<IDPInitiateResponse | RedirectAction>(
+    '/idps',
+    data
+  );
   return response.data;
 };
 
