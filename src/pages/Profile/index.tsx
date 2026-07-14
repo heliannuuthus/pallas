@@ -15,9 +15,8 @@ import type { UserProfile } from '@/types';
 import ProfileInfo from './components/ProfileInfo';
 import SecuritySettings from './components/SecuritySettings';
 import LinkedAccounts from './components/LinkedAccounts';
+import { IRIS_AUTH_CONFIG } from '@/config/env';
 import styles from './index.module.scss';
-
-const PROFILE_IDENTITY_DOMAIN = 'platform' as const;
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -31,7 +30,7 @@ const ProfilePage = () => {
       const data = await getProfile();
       setProfile(data);
       // 暂存用户信息，供 Passkey 注册成功后写入缓存
-      passkeyUserCache.setPendingUserInfo(PROFILE_IDENTITY_DOMAIN, {
+      passkeyUserCache.setPendingUserInfo(IRIS_AUTH_CONFIG.domainId, {
         uid: data.id,
         nickname: data.nickname || '用户',
         picture: data.picture,

@@ -66,7 +66,7 @@ const UserLayout = () => {
         setLoading(true);
         const data = await getProfile(auth);
         setProfile(data);
-        passkeyUserCache.setPendingUserInfo(IRIS_AUTH_CONFIG.identityDomain, {
+        passkeyUserCache.setPendingUserInfo(IRIS_AUTH_CONFIG.domainId, {
           uid: data.id,
           nickname: data.nickname || '用户',
           picture: data.picture,

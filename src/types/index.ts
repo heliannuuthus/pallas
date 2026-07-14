@@ -299,14 +299,17 @@ export interface AuthError {
 
 // ==================== Flow 信息 ====================
 
+/** Helios 业务域 ID */
+export type DomainID = 'platform' | 'consumer';
+
 /**
  * 应用信息
  */
 export interface ApplicationInfo {
   /** 应用 ID */
   app_id: string;
-  /** 应用所属身份域 */
-  domain_id: 'platform' | 'consumer';
+  /** 应用所属业务域 */
+  domain_id: DomainID;
   /** 应用名称 */
   name: string;
   /** 应用 Logo URL */
@@ -319,8 +322,8 @@ export interface ApplicationInfo {
 export interface ServiceInfo {
   /** 服务 ID */
   service_id: string;
-  /** 当前认证流程中服务的有效身份域 */
-  domain_id: 'platform' | 'consumer';
+  /** 当前认证流程中服务的有效业务域 */
+  domain_id: DomainID;
   /** 服务名称 */
   name: string;
   /** 服务描述 */

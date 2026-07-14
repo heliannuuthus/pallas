@@ -151,7 +151,7 @@ const IrisSecuritySettings = () => {
       if ('success' in finishResponse && finishResponse.success) {
         message.success('安全密钥添加成功');
         passkeyUserCache.writeAfterRegistration(
-          IRIS_AUTH_CONFIG.identityDomain
+          IRIS_AUTH_CONFIG.domainId
         );
         loadMFAStatus();
       } else {
@@ -183,7 +183,7 @@ const IrisSecuritySettings = () => {
             (c) => c.credential_id !== credentialId
           );
           if (!remaining || remaining.length === 0) {
-            passkeyUserCache.clear(IRIS_AUTH_CONFIG.identityDomain);
+            passkeyUserCache.clear(IRIS_AUTH_CONFIG.domainId);
           }
           loadMFAStatus();
         } catch (error: unknown) {

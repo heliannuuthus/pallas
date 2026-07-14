@@ -1,19 +1,19 @@
+import type { DomainID } from '@/types';
+
 /**
  * Passkey 用户缓存管理
  *
  * 用于 Welcome Back 遮盖层的本地缓存。
  * 缓存最近一次注册 Passkey 的用户信息，以实现快速回访登录体验。
  *
- * 缓存策略：每个身份域仅缓存最近一次设置 Passkey 的用户提示信息。
+ * 缓存策略：每个业务域仅缓存最近一次设置 Passkey 的用户提示信息。
  * 缓存仅用于 UI 提示，不作为认证依据。
  */
 
 const CACHE_KEY_PREFIX = 'aegis:passkey:';
 
-export type IdentityDomain = 'platform' | 'consumer';
-
-function cacheKey(domain: IdentityDomain): string {
-  return `${CACHE_KEY_PREFIX}${domain}`;
+function cacheKey(domainId: DomainID): string {
+  return `${CACHE_KEY_PREFIX}${domainId}`;
 }
 
 /**
@@ -35,7 +35,7 @@ export interface PasskeyUserHint {
  * 在个人信息页设置，注册成功后使用
  */
 const pendingUserInfo = new Map<
-  IdentityDomain,
+  DomainID,
   {
     uid: string;
     nickname: string;
@@ -58,8 +58,8 @@ export const passkeyUserCache = {
   /**
    * 读取缓存的用户信息
    */
-  get(domain: IdentityDomain): PasskeyUserHint | null {
-    const key = cacheKey(domain);
+  get(domainId: DomainID): PasskeyUserHint | null {
+    const key = cacheKey(domainId);
     try {
       const raw = localStorage.getItem(key);
       if (raw === null) return null;
@@ -82,13 +82,13 @@ export const passkeyUserCache = {
   /**
    * 写入缓存
    */
-  set(domain: IdentityDomain, info: Omit<PasskeyUserHint, 'updated_at'>): void {
+  set(domainId: DomainID, info: Omit<PasskeyUserHint, 'updated_at'>): void {
     try {
       const data: PasskeyUserHint = {
         ...info,
         updated_at: Date.now(),
       };
-      localStorage.setItem(cacheKey(domain), JSON.stringify(data));
+      localStorage.setItem(cacheKey(domainId), JSON.stringify(data));
     } catch {
       // localStorage 不可用时静默失败
     }
@@ -97,9 +97,9 @@ export const passkeyUserCache = {
   /**
    * 清除缓存
    */
-  clear(domain: IdentityDomain): void {
+  clear(domainId: DomainID): void {
     try {
-      localStorage.removeItem(cacheKey(domain));
+      localStorage.removeItem(cacheKey(domainId));
     } catch {
       // 静默失败
     }
@@ -110,25 +110,25 @@ export const passkeyUserCache = {
    * 在用户注册 Passkey 之前调用，注册成功后自动写入缓存
    */
   setPendingUserInfo(
-    domain: IdentityDomain,
+    domainId: DomainID,
     info: {
       uid: string;
       nickname: string;
       picture?: string;
     }
   ): void {
-    pendingUserInfo.set(domain, info);
+    pendingUserInfo.set(domainId, info);
   },
 
   /**
    * 注册成功后写入缓存
    * 使用之前通过 setPendingUserInfo 暂存的用户信息
    */
-  writeAfterRegistration(domain: IdentityDomain): void {
-    const info = pendingUserInfo.get(domain);
+  writeAfterRegistration(domainId: DomainID): void {
+    const info = pendingUserInfo.get(domainId);
     if (info) {
-      passkeyUserCache.set(domain, info);
-      pendingUserInfo.delete(domain);
+      passkeyUserCache.set(domainId, info);
+      pendingUserInfo.delete(domainId);
     }
   },
 };

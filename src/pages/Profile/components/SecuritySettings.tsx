@@ -19,9 +19,8 @@ import type {
   SetupTOTPResponse,
   SetupWebAuthnBeginResponse,
 } from '@/types';
+import { IRIS_AUTH_CONFIG } from '@/config/env';
 import styles from './SecuritySettings.module.scss';
-
-const PROFILE_IDENTITY_DOMAIN = 'platform' as const;
 
 const formatCredentialId = (credentialId?: string): string => {
   if (!credentialId) return '';
@@ -154,7 +153,7 @@ const SecuritySettings = () => {
       if ('success' in finishResponse && finishResponse.success) {
         message.success('安全密钥添加成功');
         // 注册成功后更新 passkey 缓存（如果有用户信息）
-        passkeyUserCache.writeAfterRegistration(PROFILE_IDENTITY_DOMAIN);
+        passkeyUserCache.writeAfterRegistration(IRIS_AUTH_CONFIG.domainId);
         loadMFAStatus();
       } else {
         throw new Error('注册失败');
@@ -184,7 +183,7 @@ const SecuritySettings = () => {
             (c) => c.credential_id !== credentialId
           );
           if (!remaining || remaining.length === 0) {
-            passkeyUserCache.clear(PROFILE_IDENTITY_DOMAIN);
+            passkeyUserCache.clear(IRIS_AUTH_CONFIG.domainId);
           }
 
           loadMFAStatus();
