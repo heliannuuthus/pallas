@@ -152,8 +152,8 @@ const SecuritySettings = () => {
 
       if ('success' in finishResponse && finishResponse.success) {
         message.success('安全密钥添加成功');
-        // 注册成功后更新 passkey 缓存（如果有用户信息）
-        passkeyUserCache.writeAfterRegistration(IRIS_AUTH_CONFIG.domainId);
+        // 注册成功后提交已暂存的 Passkey 用户提示
+        passkeyUserCache.commitPasskeyUserHint(IRIS_AUTH_CONFIG.domainId);
         loadMFAStatus();
       } else {
         throw new Error('注册失败');

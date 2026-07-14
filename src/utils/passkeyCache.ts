@@ -30,17 +30,14 @@ export interface PasskeyUserHint {
   updated_at: number;
 }
 
+type PasskeyUserHintInput = Omit<PasskeyUserHint, 'updated_at'>;
+
 /**
- * 暂存的用户信息（用于注册 Passkey 后写入缓存）
- * 在个人信息页设置，注册成功后使用
+ * 按业务域暂存的 Passkey 用户提示，注册成功后提交到 localStorage。
  */
-const pendingUserInfo = new Map<
+const pendingPasskeyUserHintsByDomain = new Map<
   DomainID,
-  {
-    uid: string;
-    nickname: string;
-    picture?: string;
-  }
+  PasskeyUserHintInput
 >();
 
 function isPasskeyUserHint(value: unknown): value is PasskeyUserHint {
@@ -52,6 +49,21 @@ function isPasskeyUserHint(value: unknown): value is PasskeyUserHint {
     typeof hint.updated_at === 'number' &&
     (hint.picture === undefined || typeof hint.picture === 'string')
   );
+}
+
+function writePasskeyUserHint(
+  domainId: DomainID,
+  hint: PasskeyUserHintInput
+): void {
+  try {
+    const data: PasskeyUserHint = {
+      ...hint,
+      updated_at: Date.now(),
+    };
+    localStorage.setItem(cacheKey(domainId), JSON.stringify(data));
+  } catch {
+    // localStorage 不可用时静默失败
+  }
 }
 
 export const passkeyUserCache = {
@@ -80,21 +92,6 @@ export const passkeyUserCache = {
   },
 
   /**
-   * 写入缓存
-   */
-  set(domainId: DomainID, info: Omit<PasskeyUserHint, 'updated_at'>): void {
-    try {
-      const data: PasskeyUserHint = {
-        ...info,
-        updated_at: Date.now(),
-      };
-      localStorage.setItem(cacheKey(domainId), JSON.stringify(data));
-    } catch {
-      // localStorage 不可用时静默失败
-    }
-  },
-
-  /**
    * 清除缓存
    */
   clear(domainId: DomainID): void {
@@ -106,29 +103,20 @@ export const passkeyUserCache = {
   },
 
   /**
-   * 暂存当前用户信息（个人信息页调用）
-   * 在用户注册 Passkey 之前调用，注册成功后自动写入缓存
+   * 暂存 Passkey 用户提示，等待注册成功后提交。
    */
-  setPendingUserInfo(
-    domainId: DomainID,
-    info: {
-      uid: string;
-      nickname: string;
-      picture?: string;
-    }
-  ): void {
-    pendingUserInfo.set(domainId, info);
+  stagePasskeyUserHint(domainId: DomainID, hint: PasskeyUserHintInput): void {
+    pendingPasskeyUserHintsByDomain.set(domainId, hint);
   },
 
   /**
-   * 注册成功后写入缓存
-   * 使用之前通过 setPendingUserInfo 暂存的用户信息
+   * 注册成功后提交之前暂存的 Passkey 用户提示。
    */
-  writeAfterRegistration(domainId: DomainID): void {
-    const info = pendingUserInfo.get(domainId);
-    if (info) {
-      passkeyUserCache.set(domainId, info);
-      pendingUserInfo.delete(domainId);
+  commitPasskeyUserHint(domainId: DomainID): void {
+    const hint = pendingPasskeyUserHintsByDomain.get(domainId);
+    if (hint) {
+      writePasskeyUserHint(domainId, hint);
+      pendingPasskeyUserHintsByDomain.delete(domainId);
     }
   },
 };

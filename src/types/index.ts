@@ -306,10 +306,10 @@ export type DomainID = 'platform' | 'consumer';
  * 应用信息
  */
 export interface ApplicationInfo {
-  /** 应用 ID */
-  app_id: string;
   /** 应用所属业务域 */
   domain_id: DomainID;
+  /** 应用 ID */
+  app_id: string;
   /** 应用名称 */
   name: string;
   /** 应用 Logo URL */
@@ -320,10 +320,10 @@ export interface ApplicationInfo {
  * 服务信息
  */
 export interface ServiceInfo {
-  /** 服务 ID */
-  service_id: string;
   /** 当前认证流程中服务的有效业务域 */
   domain_id: DomainID;
+  /** 服务 ID */
+  service_id: string;
   /** 服务名称 */
   name: string;
   /** 服务描述 */

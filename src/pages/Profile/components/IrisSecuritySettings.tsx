@@ -150,9 +150,7 @@ const IrisSecuritySettings = () => {
 
       if ('success' in finishResponse && finishResponse.success) {
         message.success('安全密钥添加成功');
-        passkeyUserCache.writeAfterRegistration(
-          IRIS_AUTH_CONFIG.domainId
-        );
+        passkeyUserCache.commitPasskeyUserHint(IRIS_AUTH_CONFIG.domainId);
         loadMFAStatus();
       } else {
         throw new Error('注册失败');
