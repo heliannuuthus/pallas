@@ -17,6 +17,8 @@ import SecuritySettings from './components/SecuritySettings';
 import LinkedAccounts from './components/LinkedAccounts';
 import styles from './index.module.scss';
 
+const PROFILE_IDENTITY_DOMAIN = 'platform' as const;
+
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ const ProfilePage = () => {
       const data = await getProfile();
       setProfile(data);
       // 暂存用户信息，供 Passkey 注册成功后写入缓存
-      passkeyUserCache.setPendingUserInfo({
+      passkeyUserCache.setPendingUserInfo(PROFILE_IDENTITY_DOMAIN, {
         uid: data.id,
         nickname: data.nickname || '用户',
         picture: data.picture,

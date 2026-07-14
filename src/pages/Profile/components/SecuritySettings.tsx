@@ -21,6 +21,8 @@ import type {
 } from '@/types';
 import styles from './SecuritySettings.module.scss';
 
+const PROFILE_IDENTITY_DOMAIN = 'platform' as const;
+
 const formatCredentialId = (credentialId?: string): string => {
   if (!credentialId) return '';
   if (credentialId.length <= 20) return credentialId;
@@ -152,7 +154,7 @@ const SecuritySettings = () => {
       if ('success' in finishResponse && finishResponse.success) {
         message.success('安全密钥添加成功');
         // 注册成功后更新 passkey 缓存（如果有用户信息）
-        passkeyUserCache.writeAfterRegistration();
+        passkeyUserCache.writeAfterRegistration(PROFILE_IDENTITY_DOMAIN);
         loadMFAStatus();
       } else {
         throw new Error('注册失败');
@@ -182,7 +184,7 @@ const SecuritySettings = () => {
             (c) => c.credential_id !== credentialId
           );
           if (!remaining || remaining.length === 0) {
-            passkeyUserCache.clear();
+            passkeyUserCache.clear(PROFILE_IDENTITY_DOMAIN);
           }
 
           loadMFAStatus();
