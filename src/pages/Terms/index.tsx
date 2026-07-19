@@ -47,12 +47,18 @@ const TermsPage = () => {
           <h3 className={styles.tocTitle}>目录</h3>
           <ul className={styles.tocList}>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('acceptance')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('acceptance')}
+              >
                 1. 服务协议的接受
               </Button>
             </li>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('services')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('services')}
+              >
                 2. 服务说明
               </Button>
             </li>
@@ -72,12 +78,18 @@ const TermsPage = () => {
               </Button>
             </li>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('disclaimer')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('disclaimer')}
+              >
                 6. 免责声明
               </Button>
             </li>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('liability')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('liability')}
+              >
                 7. 责任限制
               </Button>
             </li>

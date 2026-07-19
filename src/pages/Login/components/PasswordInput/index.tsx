@@ -44,12 +44,25 @@ const PasswordInput = ({
             aria-label="密码"
             required
           />
-          <button type="button" className={styles.visibilityButton} onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? '隐藏密码' : '显示密码'}>
+          <button
+            type="button"
+            className={styles.visibilityButton}
+            onClick={() => setShowPassword((visible) => !visible)}
+            aria-label={showPassword ? '隐藏密码' : '显示密码'}
+          >
             {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
         </div>
 
-        <Button type="submit" size="lg" loading={loading} disabled={disabled} className={styles.submitButton}>登录</Button>
+        <Button
+          type="submit"
+          size="lg"
+          loading={loading}
+          disabled={disabled}
+          className={styles.submitButton}
+        >
+          登录
+        </Button>
       </form>
     </div>
   );

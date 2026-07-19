@@ -300,9 +300,7 @@ const EmailOTPVerify = ({
       } catch (error: unknown) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          toast.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else if (isChallengeExpiredError(error)) {
           toast.warning('验证码已过期，请重新发送');
           handleResend();

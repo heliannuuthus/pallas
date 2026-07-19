@@ -452,9 +452,7 @@ const LoginPage = () => {
         if (abortController.signal.aborted) return;
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          toast.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else {
           console.debug('Page conditional UI:', error);
         }

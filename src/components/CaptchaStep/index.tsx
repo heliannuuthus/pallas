@@ -53,11 +53,7 @@ const CaptchaStep = ({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Button
-          variant="link"
-          className={styles.backBtn}
-          onClick={onCancel}
-        >
+        <Button variant="link" className={styles.backBtn} onClick={onCancel}>
           <ArrowLeft size={12} /> 返回
         </Button>
       </div>

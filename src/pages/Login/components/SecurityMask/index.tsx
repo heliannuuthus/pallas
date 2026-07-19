@@ -102,10 +102,7 @@ const SecurityMask = ({ userHint, onLogin, onSwitch }: SecurityMaskProps) => {
     <div className={styles.overlay}>
       <div className={styles.avatar}>
         {userHint.picture ? (
-          <img
-            src={userHint.picture}
-            alt={userHint.nickname}
-          />
+          <img src={userHint.picture} alt={userHint.nickname} />
         ) : (
           <div className={styles.avatarFallback}>
             {userHint.nickname.charAt(0).toUpperCase()}
@@ -124,7 +121,9 @@ const SecurityMask = ({ userHint, onLogin, onSwitch }: SecurityMaskProps) => {
         disabled={loading}
         loading={loading}
       >
-        {!loading ? <FingerprintIcon style={{ width: 20, height: 20 }} /> : null}
+        {!loading ? (
+          <FingerprintIcon style={{ width: 20, height: 20 }} />
+        ) : null}
         验证身份并登录
       </Button>
 

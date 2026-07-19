@@ -55,10 +55,7 @@ const PasswordVerify = ({
   const initialView: ViewState = needsCaptcha ? 'captcha' : 'password';
   const [viewState, setViewState] = useState<ViewState>(initialView);
 
-  if (
-    pendingActions.seq !== 0 &&
-    pendingActions.seq !== lastPendingSeq
-  ) {
+  if (pendingActions.seq !== 0 && pendingActions.seq !== lastPendingSeq) {
     setLastPendingSeq(pendingActions.seq);
     if (
       pendingActions.actions.some(
@@ -112,9 +109,7 @@ const PasswordVerify = ({
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          toast.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else {
           showError(error);
         }
@@ -132,9 +127,7 @@ const PasswordVerify = ({
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          toast.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else {
           onError(error instanceof Error ? error : new Error('登录失败'));
         }

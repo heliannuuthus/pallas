@@ -67,7 +67,10 @@ const PrivacyPage = () => {
               </Button>
             </li>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('security')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('security')}
+              >
                 4. 信息存储与保护
               </Button>
             </li>
@@ -82,12 +85,18 @@ const PrivacyPage = () => {
               </Button>
             </li>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('children')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('children')}
+              >
                 7. 儿童隐私
               </Button>
             </li>
             <li>
-              <Button variant="link" onClick={() => scrollToSection('thirdparty')}>
+              <Button
+                variant="link"
+                onClick={() => scrollToSection('thirdparty')}
+              >
                 8. 第三方链接
               </Button>
             </li>
