@@ -27,7 +27,6 @@ const ProfilePage = () => {
 
   const loadProfile = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getProfile();
       setProfile(data);
       // 暂存 Passkey 用户提示，供注册成功后写入缓存
@@ -46,8 +45,31 @@ const ProfilePage = () => {
   }, [navigate]);
 
   useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+    let cancelled = false;
+
+    void getProfile()
+      .then((data) => {
+        if (cancelled) return;
+        setProfile(data);
+        passkeyUserCache.stagePasskeyUserHint(IRIS_AUTH_CONFIG.domainId, {
+          uid: data.id,
+          nickname: data.nickname || '用户',
+          picture: data.picture,
+        });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        showError(error);
+        navigate('/login');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
 
   const handleLogout = () => {
     // TODO: 调用登出 API

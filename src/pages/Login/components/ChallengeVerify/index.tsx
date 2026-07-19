@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { Button, Input } from 'antd';
 import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useCountDown } from 'ahooks';
@@ -37,22 +37,18 @@ const ChallengeVerify = ({
   const retryAfter = challenge.retry_after ?? RESEND_COOLDOWN;
 
   /* eslint-disable react-hooks/purity -- Date.now() is inherently impure but necessary for countdown timers */
-  const mountTimeRef = useRef(Date.now());
-
-  const [resendTargetDate, setResendTargetDate] = useState(
-    () => mountTimeRef.current + retryAfter * 1000
-  );
-
-  const challengeIdRef = useRef(challenge.challenge_id);
-  const retryAfterRef = useRef(retryAfter);
-  if (
-    challenge.challenge_id !== challengeIdRef.current ||
-    retryAfter !== retryAfterRef.current
-  ) {
-    challengeIdRef.current = challenge.challenge_id;
-    retryAfterRef.current = retryAfter;
-    setResendTargetDate(Date.now() + retryAfter * 1000);
+  const resendTimerKey = `${challenge.challenge_id}:${retryAfter}`;
+  const [resendTimer, setResendTimer] = useState(() => ({
+    key: resendTimerKey,
+    targetDate: Date.now() + retryAfter * 1000,
+  }));
+  if (resendTimer.key !== resendTimerKey) {
+    setResendTimer({
+      key: resendTimerKey,
+      targetDate: Date.now() + retryAfter * 1000,
+    });
   }
+  const resendTargetDate = resendTimer.targetDate;
 
   const [resendCountdown] = useCountDown({ targetDate: resendTargetDate });
   const resendSeconds = Math.round(resendCountdown / 1000);

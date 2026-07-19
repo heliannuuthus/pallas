@@ -1,5 +1,5 @@
 import { toast } from '@heliannuuthus/ui/toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Modal, Input, QRCode, Spin, Empty } from 'antd';
 import {
   SafetyOutlined,
@@ -42,13 +42,8 @@ const SecuritySettings = () => {
   // WebAuthn 设置状态
   const [webauthnLoading, setWebauthnLoading] = useState(false);
 
-  useEffect(() => {
-    loadMFAStatus();
-  }, []);
-
-  const loadMFAStatus = async () => {
+  const loadMFAStatus = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getMFAStatus();
       setMfaStatus(data);
     } catch (error: unknown) {
@@ -56,7 +51,26 @@ const SecuritySettings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getMFAStatus()
+      .then((data) => {
+        if (!cancelled) setMfaStatus(data);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // ==================== TOTP ====================
 

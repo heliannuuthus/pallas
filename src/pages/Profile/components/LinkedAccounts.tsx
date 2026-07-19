@@ -1,5 +1,5 @@
 import { toast } from '@heliannuuthus/ui/toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Modal, Empty, Spin } from 'antd';
 import {
   GithubOutlined,
@@ -33,13 +33,8 @@ const LinkedAccounts = () => {
   const [loading, setLoading] = useState(true);
   const [identities, setIdentities] = useState<Identity[]>([]);
 
-  useEffect(() => {
-    loadIdentities();
-  }, []);
-
-  const loadIdentities = async () => {
+  const loadIdentities = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getIdentities();
       setIdentities(data.identities || []);
     } catch (error: unknown) {
@@ -47,7 +42,26 @@ const LinkedAccounts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getIdentities()
+      .then((data) => {
+        if (!cancelled) setIdentities(data.identities || []);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleUnbind = async (idp: string) => {
     const config = idpConfig[idp] || { name: idp };

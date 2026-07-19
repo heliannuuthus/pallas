@@ -5,7 +5,7 @@ import { toast } from '@heliannuuthus/ui/toast';
  * 使用 irisApi（Bearer Token）替代原有的 Cookie API
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Modal, Input, QRCode, Spin, Empty } from 'antd';
 import {
   SafetyOutlined,
@@ -53,14 +53,8 @@ const IrisSecuritySettings = () => {
 
   const [webauthnLoading, setWebauthnLoading] = useState(false);
 
-  useEffect(() => {
-    loadMFAStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadMFAStatus = async () => {
+  const loadMFAStatus = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getMFAStatus(auth);
       setMfaStatus(data);
     } catch (error: unknown) {
@@ -68,7 +62,26 @@ const IrisSecuritySettings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getMFAStatus(auth)
+      .then((data) => {
+        if (!cancelled) setMfaStatus(data);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [auth]);
 
   const handleSetupTOTP = async () => {
     try {

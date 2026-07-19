@@ -63,7 +63,6 @@ const UserLayout = () => {
   const loadProfile = useCallback(async () => {
     if (!ready || !authenticated) return;
     try {
-      setLoading(true);
       const data = await getProfile(auth);
       setProfile(data);
       passkeyUserCache.stagePasskeyUserHint(IRIS_AUTH_CONFIG.domainId, {
@@ -79,8 +78,30 @@ const UserLayout = () => {
   }, [ready, authenticated, auth]);
 
   useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+    let cancelled = false;
+
+    if (!ready || !authenticated) return;
+    void getProfile(auth)
+      .then((data) => {
+        if (cancelled) return;
+        setProfile(data);
+        passkeyUserCache.stagePasskeyUserHint(IRIS_AUTH_CONFIG.domainId, {
+          uid: data.id,
+          nickname: data.nickname || '用户',
+          picture: data.picture,
+        });
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, authenticated, auth]);
 
   const handleTabChange = (key: string) => {
     const route = TAB_ROUTE[key];

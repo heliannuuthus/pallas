@@ -1,5 +1,5 @@
 import { toast } from '@heliannuuthus/ui/toast';
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Form, Input, Button } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -48,7 +48,7 @@ const PasswordVerify = ({
   const [isLoading, setIsLoading] = useState(false);
   const [_captchaVerified, setCaptchaVerified] = useState(false);
   const [dynamicRequireCaptcha, setDynamicRequireCaptcha] = useState(false);
-  const lastPendingSeqRef = useRef(0);
+  const [lastPendingSeq, setLastPendingSeq] = useState(0);
 
   const needsCaptcha =
     (requiresCaptcha || dynamicRequireCaptcha) && !!captchaConfig;
@@ -57,9 +57,9 @@ const PasswordVerify = ({
 
   if (
     pendingActions.seq !== 0 &&
-    pendingActions.seq !== lastPendingSeqRef.current
+    pendingActions.seq !== lastPendingSeq
   ) {
-    lastPendingSeqRef.current = pendingActions.seq;
+    setLastPendingSeq(pendingActions.seq);
     if (
       pendingActions.actions.some(
         (a) => captchaConfig && a === captchaConfig.connection
