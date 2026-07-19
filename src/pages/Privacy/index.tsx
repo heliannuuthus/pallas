@@ -1,5 +1,5 @@
-import { Button } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button } from '@heliannuuthus/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './index.module.scss';
 
@@ -27,12 +27,11 @@ const PrivacyPage = () => {
         {/* 头部 */}
         <header className={styles.header}>
           <Button
-            type="link"
+            variant="link"
             className={styles.backButton}
-            icon={<ArrowLeftOutlined />}
             onClick={handleBack}
           >
-            返回
+            <ArrowLeft size={16} aria-hidden="true" /> 返回
           </Button>
           <div className={styles.headerContent}>
             <h1 className={styles.title}>隐私政策</h1>
@@ -48,57 +47,57 @@ const PrivacyPage = () => {
           <h3 className={styles.tocTitle}>目录</h3>
           <ul className={styles.tocList}>
             <li>
-              <Button type="link" onClick={() => scrollToSection('intro')}>
+              <Button variant="link" onClick={() => scrollToSection('intro')}>
                 引言
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('collect')}>
+              <Button variant="link" onClick={() => scrollToSection('collect')}>
                 1. 我们收集的信息
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('use')}>
+              <Button variant="link" onClick={() => scrollToSection('use')}>
                 2. 我们如何使用信息
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('share')}>
+              <Button variant="link" onClick={() => scrollToSection('share')}>
                 3. 信息共享与披露
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('security')}>
+              <Button variant="link" onClick={() => scrollToSection('security')}>
                 4. 信息存储与保护
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('cookie')}>
+              <Button variant="link" onClick={() => scrollToSection('cookie')}>
                 5. Cookie 和追踪技术
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('rights')}>
+              <Button variant="link" onClick={() => scrollToSection('rights')}>
                 6. 您的权利
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('children')}>
+              <Button variant="link" onClick={() => scrollToSection('children')}>
                 7. 儿童隐私
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('thirdparty')}>
+              <Button variant="link" onClick={() => scrollToSection('thirdparty')}>
                 8. 第三方链接
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('changes')}>
+              <Button variant="link" onClick={() => scrollToSection('changes')}>
                 9. 隐私政策的变更
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('contact')}>
+              <Button variant="link" onClick={() => scrollToSection('contact')}>
                 10. 联系我们
               </Button>
             </li>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Image, Spin, message } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Spinner } from '@heliannuuthus/ui/spinner';
+import { toast } from '@heliannuuthus/ui/toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import {
@@ -83,7 +83,7 @@ const LoginPage = () => {
   useEffect(() => {
     const state = location.state as { errorMessage?: string } | null;
     if (state?.errorMessage) {
-      message.error(state.errorMessage);
+      toast.error(state.errorMessage);
       // 清除 state 防止刷新后重复显示
       window.history.replaceState({}, '');
     }
@@ -94,7 +94,7 @@ const LoginPage = () => {
     const oauthError = new URLSearchParams(location.search).get('oauth_error');
     if (!oauthError) return;
 
-    message.error('第三方登录未完成，请重试');
+    toast.error('第三方登录未完成，请重试');
     navigate('/login', { replace: true });
   }, [location.search, navigate]);
 
@@ -241,12 +241,12 @@ const LoginPage = () => {
         verifyResponse.required &&
         Object.keys(verifyResponse.required).length > 0
       ) {
-        message.warning('请先完成前置验证');
+        toast.warning('请先完成前置验证');
         return;
       }
 
       if (!verifyResponse.verified) {
-        message.error('验证失败，请重试');
+        toast.error('验证失败，请重试');
         return;
       }
 
@@ -277,7 +277,7 @@ const LoginPage = () => {
     } catch (error: unknown) {
       if (isRateLimitError(error)) {
         const info = getRateLimitData(error);
-        message.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
+        toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
       } else {
         showError(error);
       }
@@ -405,7 +405,7 @@ const LoginPage = () => {
     } catch (error) {
       if (isRateLimitError(error)) {
         const info = getRateLimitData(error);
-        message.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
+        toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
       } else if (error instanceof Error) {
         if (
           error.name !== 'NotAllowedError' &&
@@ -452,7 +452,7 @@ const LoginPage = () => {
         if (abortController.signal.aborted) return;
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          message.warning(
+          toast.warning(
             `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
           );
         } else {
@@ -497,7 +497,7 @@ const LoginPage = () => {
     } catch (error) {
       if (isRateLimitError(error)) {
         const info = getRateLimitData(error);
-        message.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
+        toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
       } else if (error instanceof Error) {
         if (
           error.name !== 'NotAllowedError' &&
@@ -520,9 +520,7 @@ const LoginPage = () => {
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.loadingState}>
-            <Spin
-              indicator={<LoadingOutlined spin style={{ fontSize: 32 }} />}
-            />
+            <Spinner className={styles.loadingSpinner} />
             <p>正在加载...</p>
           </div>
         </div>
@@ -551,21 +549,12 @@ const LoginPage = () => {
         {/* Logo */}
         <div className={styles.logo}>
           {authContext?.application?.logo_url ? (
-            <Image
+            <img
               src={authContext.application.logo_url}
               alt={authContext.application?.name}
-              preview={false}
               width={48}
               height={48}
-              styles={{
-                root: { width: 48, height: 48, display: 'flex' },
-                image: {
-                  width: 48,
-                  height: 48,
-                  borderRadius: 12,
-                  objectFit: 'contain',
-                },
-              }}
+              className={styles.applicationLogo}
             />
           ) : (
             <svg viewBox="0 0 32 32" fill="none" width={48} height={48}>

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Button, Image, message } from 'antd';
+import { Button } from '@heliannuuthus/ui/button';
+import { toast } from '@heliannuuthus/ui/toast';
 import type { PasskeyUserHint } from '@/utils/passkeyCache';
 import styles from './index.module.scss';
 
@@ -38,19 +39,19 @@ const SecurityMask = ({ userHint, onLogin, onSwitch }: SecurityMaskProps) => {
           error.name === 'NotAllowedError' ||
           error.message.includes('cancel')
         ) {
-          message.info('本次验证已取消');
+          toast.info('本次验证已取消');
           return;
         }
         if (
           error.message.includes('not found') ||
           error.message.includes('credential')
         ) {
-          message.warning('未检测到可用的安全凭证，请使用其他方式登录');
+          toast.warning('未检测到可用的安全凭证，请使用其他方式登录');
           onSwitch();
           return;
         }
       }
-      message.error('验证失败，请重试');
+      toast.error('验证失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -101,10 +102,9 @@ const SecurityMask = ({ userHint, onLogin, onSwitch }: SecurityMaskProps) => {
     <div className={styles.overlay}>
       <div className={styles.avatar}>
         {userHint.picture ? (
-          <Image
+          <img
             src={userHint.picture}
             alt={userHint.nickname}
-            preview={false}
           />
         ) : (
           <div className={styles.avatarFallback}>
@@ -118,26 +118,19 @@ const SecurityMask = ({ userHint, onLogin, onSwitch }: SecurityMaskProps) => {
       <p className={styles.subtitle}>使用已注册的安全凭证快速登录</p>
 
       <Button
-        type="primary"
-        size="large"
-        block
+        size="lg"
         style={primaryButtonStyle}
         onClick={handleLogin}
         disabled={loading}
         loading={loading}
-        icon={
-          !loading ? (
-            <FingerprintIcon style={{ width: 20, height: 20 }} />
-          ) : undefined
-        }
       >
+        {!loading ? <FingerprintIcon style={{ width: 20, height: 20 }} /> : null}
         验证身份并登录
       </Button>
 
       <Button
-        size="large"
-        block
-        type="text"
+        size="lg"
+        variant="ghost"
         style={secondaryButtonStyle}
         onClick={onSwitch}
         disabled={loading}

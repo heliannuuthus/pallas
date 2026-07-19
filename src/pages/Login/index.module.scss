@@ -81,6 +81,19 @@ $bg-color: #f8fafc;
   }
 }
 
+.applicationLogo {
+  width: 48px;
+  height: 48px;
+  display: block;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+}
+
 // ========================================
 // 标题
 // ========================================

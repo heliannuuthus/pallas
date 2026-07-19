@@ -1,5 +1,5 @@
-import { Button } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button } from '@heliannuuthus/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
 
@@ -27,12 +27,11 @@ const TermsPage = () => {
         {/* 头部 */}
         <header className={styles.header}>
           <Button
-            type="link"
+            variant="link"
             className={styles.backButton}
-            icon={<ArrowLeftOutlined />}
             onClick={handleBack}
           >
-            返回
+            <ArrowLeft size={16} aria-hidden="true" /> 返回
           </Button>
           <div className={styles.headerContent}>
             <h1 className={styles.title}>服务条款</h1>
@@ -48,52 +47,52 @@ const TermsPage = () => {
           <h3 className={styles.tocTitle}>目录</h3>
           <ul className={styles.tocList}>
             <li>
-              <Button type="link" onClick={() => scrollToSection('acceptance')}>
+              <Button variant="link" onClick={() => scrollToSection('acceptance')}>
                 1. 服务协议的接受
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('services')}>
+              <Button variant="link" onClick={() => scrollToSection('services')}>
                 2. 服务说明
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('account')}>
+              <Button variant="link" onClick={() => scrollToSection('account')}>
                 3. 用户账户
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('conduct')}>
+              <Button variant="link" onClick={() => scrollToSection('conduct')}>
                 4. 用户行为规范
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('ip')}>
+              <Button variant="link" onClick={() => scrollToSection('ip')}>
                 5. 知识产权
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('disclaimer')}>
+              <Button variant="link" onClick={() => scrollToSection('disclaimer')}>
                 6. 免责声明
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('liability')}>
+              <Button variant="link" onClick={() => scrollToSection('liability')}>
                 7. 责任限制
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('changes')}>
+              <Button variant="link" onClick={() => scrollToSection('changes')}>
                 8. 条款修改
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('law')}>
+              <Button variant="link" onClick={() => scrollToSection('law')}>
                 9. 适用法律与争议解决
               </Button>
             </li>
             <li>
-              <Button type="link" onClick={() => scrollToSection('contact')}>
+              <Button variant="link" onClick={() => scrollToSection('contact')}>
                 10. 联系我们
               </Button>
             </li>

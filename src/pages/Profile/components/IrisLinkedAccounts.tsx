@@ -1,11 +1,12 @@
+import { toast } from '@heliannuuthus/ui/toast';
 /**
- * iris 域名下的关联账号页面（/user/linked 子路由）
+ * iris 域名下的关联账号页面（/u/c 子路由）
  *
  * 使用 irisApi（Bearer Token）替代原有的 Cookie API
  */
 
 import { useState, useEffect } from 'react';
-import { Card, Button, message, Modal, Empty, Spin } from 'antd';
+import { Card, Button, Modal, Empty, Spin } from 'antd';
 import {
   GithubOutlined,
   GoogleOutlined,
@@ -67,7 +68,7 @@ const IrisLinkedAccounts = () => {
       onOk: async () => {
         try {
           await unbindIdentity(auth, idp);
-          message.success(`${config.name} 已解绑`);
+          toast.success(`${config.name} 已解绑`);
           loadIdentities();
         } catch (error: unknown) {
           showError(error);
@@ -77,7 +78,7 @@ const IrisLinkedAccounts = () => {
   };
 
   const handleBind = (idp: string) => {
-    message.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
+    toast.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
   };
 
   if (loading) {

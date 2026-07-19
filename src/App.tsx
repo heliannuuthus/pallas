@@ -42,13 +42,15 @@ function IrisRoutes() {
     <AuthProvider>
       <Routes>
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-        <Route path="/user" element={<UserLayout />}>
-          <Route index element={<Navigate to="/user/profile" replace />} />
-          <Route path="profile" element={<IrisProfileInfo />} />
-          <Route path="security" element={<IrisSecuritySettings />} />
-          <Route path="linked" element={<IrisLinkedAccounts />} />
+        <Route path="/u" element={<UserLayout />}>
+          <Route index element={<IrisProfileInfo />} />
+          <Route path="s" element={<IrisSecuritySettings />} />
+          <Route path="c" element={<IrisLinkedAccounts />} />
         </Route>
-        <Route path="*" element={<Navigate to="/user/profile" replace />} />
+        <Route path="/user/profile" element={<Navigate to="/u" replace />} />
+        <Route path="/user/security" element={<Navigate to="/u/s" replace />} />
+        <Route path="/user/linked" element={<Navigate to="/u/c" replace />} />
+        <Route path="*" element={<Navigate to="/u" replace />} />
       </Routes>
     </AuthProvider>
   );

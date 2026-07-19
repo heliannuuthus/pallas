@@ -1,5 +1,6 @@
+import { toast } from '@heliannuuthus/ui/toast';
 import { useState, useRef, useCallback, useMemo } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button } from 'antd';
 import {
   ArrowLeftOutlined,
   LockOutlined,
@@ -111,7 +112,7 @@ const PasswordVerify = ({
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          message.warning(
+          toast.warning(
             `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
           );
         } else {
@@ -131,7 +132,7 @@ const PasswordVerify = ({
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          message.warning(
+          toast.warning(
             `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
           );
         } else {

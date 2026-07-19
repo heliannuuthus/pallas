@@ -1,5 +1,6 @@
+import { toast } from '@heliannuuthus/ui/toast';
 import { useState, useEffect } from 'react';
-import { Card, Button, message, Modal, Empty, Spin } from 'antd';
+import { Card, Button, Modal, Empty, Spin } from 'antd';
 import {
   GithubOutlined,
   GoogleOutlined,
@@ -60,7 +61,7 @@ const LinkedAccounts = () => {
       onOk: async () => {
         try {
           await unbindIdentity(idp);
-          message.success(`${config.name} 已解绑`);
+          toast.success(`${config.name} 已解绑`);
           loadIdentities();
         } catch (error: unknown) {
           showError(error);
@@ -71,7 +72,7 @@ const LinkedAccounts = () => {
 
   const handleBind = (idp: string) => {
     // TODO: 跳转到绑定流程
-    message.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
+    toast.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
   };
 
   if (loading) {

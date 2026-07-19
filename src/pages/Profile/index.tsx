@@ -1,6 +1,7 @@
+import { toast } from '@heliannuuthus/ui/toast';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Avatar, Button, Tabs, message, Spin } from 'antd';
+import { Card, Avatar, Button, Tabs, Spin } from 'antd';
 import {
   UserOutlined,
   SafetyOutlined,
@@ -50,7 +51,7 @@ const ProfilePage = () => {
 
   const handleLogout = () => {
     // TODO: 调用登出 API
-    message.success('已退出登录');
+    toast.success('已退出登录');
     navigate('/login');
   };
 

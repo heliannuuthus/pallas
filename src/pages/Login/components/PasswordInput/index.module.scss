@@ -25,3 +25,38 @@
 .form {
   width: 100%;
 }
+
+.passwordField {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  > svg {
+    position: absolute;
+    left: 14px;
+    z-index: 1;
+    color: #94a3b8;
+  }
+
+  input {
+    padding-inline: 42px;
+  }
+}
+
+.visibilityButton {
+  position: absolute;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  padding: 7px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: 8px;
+}

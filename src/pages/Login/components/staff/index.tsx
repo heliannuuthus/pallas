@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { message } from 'antd';
+import { toast } from '@heliannuuthus/ui/toast';
 import type {
   Connection,
   ChallengeResponse,
@@ -115,7 +115,7 @@ const StaffLogin = ({
 
   // 错误处理
   const handleError = useCallback((error: Error) => {
-    message.error(error.message || '操作失败');
+    toast.error(error.message || '操作失败');
   }, []);
 
   // 如果没有任何可用的登录方式，不渲染
