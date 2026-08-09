@@ -24,7 +24,7 @@ export function getAegisEndpoint(): string {
   return `${window.location.protocol}//${AEGIS_HOSTNAME}`;
 }
 
-/** iris API 基础地址（nginx 会将 /api/ 映射到后端 /user/） */
+/** Iris API 基础地址（网关将 /api/ 原样转发给 Aegis） */
 export function getIrisApiBase(): string {
   return '/api';
 }
