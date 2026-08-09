@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Card, Button, message, Modal, Input, QRCode, Spin, Empty } from 'antd';
+import { toast } from '@heliannuuthus/ui/toast';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, Button, Modal, Input, QRCode, Spin, Empty } from 'antd';
 import {
   SafetyOutlined,
   KeyOutlined,
@@ -41,13 +42,8 @@ const SecuritySettings = () => {
   // WebAuthn 设置状态
   const [webauthnLoading, setWebauthnLoading] = useState(false);
 
-  useEffect(() => {
-    loadMFAStatus();
-  }, []);
-
-  const loadMFAStatus = async () => {
+  const loadMFAStatus = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getMFAStatus();
       setMfaStatus(data);
     } catch (error: unknown) {
@@ -55,7 +51,26 @@ const SecuritySettings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getMFAStatus()
+      .then((data) => {
+        if (!cancelled) setMfaStatus(data);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // ==================== TOTP ====================
 
@@ -83,7 +98,7 @@ const SecuritySettings = () => {
         type: 'totp',
         code: totpCode,
       });
-      message.success('TOTP 绑定成功');
+      toast.success('TOTP 绑定成功');
       setTotpModalVisible(false);
       setTotpSetup(null);
       setTotpCode('');
@@ -106,7 +121,7 @@ const SecuritySettings = () => {
       onOk: async () => {
         try {
           await deleteMFA({ type: 'totp' });
-          message.success('TOTP 已删除');
+          toast.success('TOTP 已删除');
           loadMFAStatus();
         } catch (error: unknown) {
           showError(error);
@@ -151,7 +166,7 @@ const SecuritySettings = () => {
       });
 
       if ('success' in finishResponse && finishResponse.success) {
-        message.success('安全密钥添加成功');
+        toast.success('安全密钥添加成功');
         // 注册成功后提交已暂存的 Passkey 用户提示
         passkeyUserCache.commitPasskeyUserHint(IRIS_AUTH_CONFIG.domainId);
         loadMFAStatus();
@@ -176,7 +191,7 @@ const SecuritySettings = () => {
       onOk: async () => {
         try {
           await deleteMFA({ type: 'webauthn', credential_id: credentialId });
-          message.success('安全密钥已删除');
+          toast.success('安全密钥已删除');
 
           // 如果删除后没有剩余的 passkey/webauthn 凭证，清除本地缓存
           const remaining = webauthnCredentials?.filter(

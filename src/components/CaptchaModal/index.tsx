@@ -1,5 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
-import { Modal, Spin } from 'antd';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@heliannuuthus/ui/dialog';
+import { Spinner } from '@heliannuuthus/ui/spinner';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import styles from './index.module.scss';
 
@@ -48,53 +55,49 @@ const CaptchaModal = ({
   }, []);
 
   return (
-    <Modal
-      open={open}
-      title="安全验证"
-      footer={null}
-      onCancel={onCancel}
-      centered
-      destroyOnClose
-      maskClosable={false}
-      width={380}
-      className={styles.captchaModal}
-      transitionName=""
-      maskTransitionName=""
-    >
-      <div className={styles.content}>
-        <p className={styles.hint}>请完成人机验证以继续</p>
+    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onCancel()}>
+      <DialogContent
+        className={styles.captchaModal}
+        showCloseButton={!isSubmitting}
+        onPointerDownOutside={(event) => event.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>安全验证</DialogTitle>
+          <DialogDescription>请完成人机验证以继续</DialogDescription>
+        </DialogHeader>
+        <div className={styles.content}>
+          <div className={styles.turnstileWrapper}>
+            {isLoading && (
+              <div className={styles.loading}>
+                <Spinner />
+              </div>
+            )}
 
-        <div className={styles.turnstileWrapper}>
-          {isLoading && (
-            <div className={styles.loading}>
-              <Spin />
+            {open && siteKey && (
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={siteKey}
+                onSuccess={handleSuccess}
+                onError={handleError}
+                onExpire={handleExpire}
+                onWidgetLoad={handleWidgetLoad}
+                options={{
+                  theme: 'light',
+                  size: 'flexible',
+                }}
+              />
+            )}
+          </div>
+
+          {isSubmitting && (
+            <div className={styles.submitting}>
+              <Spinner className={styles.smallSpinner} />
+              <span>验证中...</span>
             </div>
           )}
-
-          {open && siteKey && (
-            <Turnstile
-              ref={turnstileRef}
-              siteKey={siteKey}
-              onSuccess={handleSuccess}
-              onError={handleError}
-              onExpire={handleExpire}
-              onWidgetLoad={handleWidgetLoad}
-              options={{
-                theme: 'light',
-                size: 'flexible',
-              }}
-            />
-          )}
         </div>
-
-        {isSubmitting && (
-          <div className={styles.submitting}>
-            <Spin size="small" />
-            <span>验证中...</span>
-          </div>
-        )}
-      </div>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };
 

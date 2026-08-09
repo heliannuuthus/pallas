@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Card, Button, message, Modal, Empty, Spin } from 'antd';
+import { toast } from '@heliannuuthus/ui/toast';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, Button, Modal, Empty, Spin } from 'antd';
 import {
   GithubOutlined,
   GoogleOutlined,
@@ -32,13 +33,8 @@ const LinkedAccounts = () => {
   const [loading, setLoading] = useState(true);
   const [identities, setIdentities] = useState<Identity[]>([]);
 
-  useEffect(() => {
-    loadIdentities();
-  }, []);
-
-  const loadIdentities = async () => {
+  const loadIdentities = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getIdentities();
       setIdentities(data.identities || []);
     } catch (error: unknown) {
@@ -46,7 +42,26 @@ const LinkedAccounts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getIdentities()
+      .then((data) => {
+        if (!cancelled) setIdentities(data.identities || []);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleUnbind = async (idp: string) => {
     const config = idpConfig[idp] || { name: idp };
@@ -60,7 +75,7 @@ const LinkedAccounts = () => {
       onOk: async () => {
         try {
           await unbindIdentity(idp);
-          message.success(`${config.name} 已解绑`);
+          toast.success(`${config.name} 已解绑`);
           loadIdentities();
         } catch (error: unknown) {
           showError(error);
@@ -71,7 +86,7 @@ const LinkedAccounts = () => {
 
   const handleBind = (idp: string) => {
     // TODO: 跳转到绑定流程
-    message.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
+    toast.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
   };
 
   if (loading) {

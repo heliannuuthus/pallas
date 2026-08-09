@@ -12,3 +12,6 @@ permissions:
 jobs:
   ci:
     uses: heliannuuthus/hephaestus/.github/workflows/ci-frontend.yml@main
+    with:
+      workdir: ./
+      node-version: '24.13.0'

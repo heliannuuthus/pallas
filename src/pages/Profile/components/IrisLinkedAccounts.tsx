@@ -1,11 +1,12 @@
+import { toast } from '@heliannuuthus/ui/toast';
 /**
- * iris 域名下的关联账号页面（/user/linked 子路由）
+ * iris 域名下的关联账号页面（/u/c 子路由）
  *
  * 使用 irisApi（Bearer Token）替代原有的 Cookie API
  */
 
-import { useState, useEffect } from 'react';
-import { Card, Button, message, Modal, Empty, Spin } from 'antd';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, Button, Modal, Empty, Spin } from 'antd';
 import {
   GithubOutlined,
   GoogleOutlined,
@@ -39,14 +40,8 @@ const IrisLinkedAccounts = () => {
   const [loading, setLoading] = useState(true);
   const [identities, setIdentities] = useState<Identity[]>([]);
 
-  useEffect(() => {
-    loadIdentities();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadIdentities = async () => {
+  const loadIdentities = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getIdentities(auth);
       setIdentities(data.identities || []);
     } catch (error: unknown) {
@@ -54,7 +49,26 @@ const IrisLinkedAccounts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getIdentities(auth)
+      .then((data) => {
+        if (!cancelled) setIdentities(data.identities || []);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [auth]);
 
   const handleUnbind = async (idp: string) => {
     const config = idpConfig[idp] || { name: idp };
@@ -67,7 +81,7 @@ const IrisLinkedAccounts = () => {
       onOk: async () => {
         try {
           await unbindIdentity(auth, idp);
-          message.success(`${config.name} 已解绑`);
+          toast.success(`${config.name} 已解绑`);
           loadIdentities();
         } catch (error: unknown) {
           showError(error);
@@ -77,7 +91,7 @@ const IrisLinkedAccounts = () => {
   };
 
   const handleBind = (idp: string) => {
-    message.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
+    toast.info(`绑定 ${idpConfig[idp]?.name || idp} 功能开发中`);
   };
 
   if (loading) {

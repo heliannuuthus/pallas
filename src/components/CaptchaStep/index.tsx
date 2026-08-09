@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
-import { Spin, Button } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button } from '@heliannuuthus/ui/button';
+import { Spinner } from '@heliannuuthus/ui/spinner';
+import { ArrowLeft } from 'lucide-react';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import styles from './index.module.scss';
 
@@ -52,13 +53,8 @@ const CaptchaStep = ({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Button
-          type="link"
-          className={styles.backBtn}
-          icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
-          onClick={onCancel}
-        >
-          返回
+        <Button variant="link" className={styles.backBtn} onClick={onCancel}>
+          <ArrowLeft size={12} /> 返回
         </Button>
       </div>
 
@@ -69,7 +65,7 @@ const CaptchaStep = ({
         <div className={styles.turnstileWrapper}>
           {isLoading && (
             <div className={styles.loading}>
-              <Spin />
+              <Spinner />
             </div>
           )}
 
@@ -92,7 +88,7 @@ const CaptchaStep = ({
         {hasError && (
           <div className={styles.errorArea}>
             <p className={styles.errorText}>验证加载失败</p>
-            <Button type="link" size="small" onClick={handleRetry}>
+            <Button variant="link" size="sm" onClick={handleRetry}>
               重试
             </Button>
           </div>

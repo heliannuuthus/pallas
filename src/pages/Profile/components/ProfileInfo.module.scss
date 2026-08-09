@@ -1,18 +1,162 @@
 @use '@/styles/variables' as *;
 
 .container {
-  max-width: 500px;
+  max-width: 680px;
+  display: grid;
+  gap: 18px;
 }
-
+.form {
+  margin: 0;
+}
+.profileCard,
+.contactCard {
+  overflow: hidden;
+  border: 1px solid rgba(31, 41, 55, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 30px rgba(37, 45, 75, 0.045);
+}
+.profileCard {
+  padding: 24px;
+}
+.avatarPreview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid $border-light;
+  :global(.ant-avatar) {
+    flex: none;
+    background: $gradient-primary;
+    box-shadow: 0 8px 18px rgba($primary-color, 0.18);
+  }
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  strong {
+    color: $text-primary;
+    font-size: $text-sm;
+  }
+  span {
+    color: $text-muted;
+    font-size: $text-xs;
+    line-height: 1.5;
+  }
+}
 .form {
   :global {
     .ant-form-item-label > label {
-      font-weight: $font-medium;
+      color: $text-secondary;
+      font-size: $text-xs;
+      font-weight: $font-semibold;
+    }
+    .ant-input-affix-wrapper {
+      border-radius: 10px;
+    }
+    .ant-input-prefix {
+      margin-right: 10px;
+      color: $text-muted;
     }
   }
 }
-
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+  :global(.ant-btn) {
+    min-width: 112px;
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba($primary-color, 0.18);
+  }
+}
+.contactCard {
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 20px;
+    border-bottom: 1px solid $border-light;
+    h3 {
+      margin: 0;
+      color: $text-primary;
+      font-size: $text-sm;
+    }
+    p {
+      margin: 4px 0 0;
+      color: $text-muted;
+      font-size: 10px;
+    }
+    > span {
+      padding: 4px 8px;
+      border-radius: $radius-full;
+      background: $gray-100;
+      color: $text-muted;
+      font-size: 9px;
+      font-weight: $font-semibold;
+    }
+  }
+  dl {
+    margin: 0;
+  }
+  dl > div {
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+    padding: 12px 20px;
+    & + div {
+      border-top: 1px solid $border-light;
+    }
+  }
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text-muted;
+    font-size: $text-xs;
+  }
+  dd {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    margin: 0;
+    overflow: hidden;
+    color: $text-secondary;
+    font-size: $text-sm;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 .verified {
-  color: $success-color;
-  font-size: $text-xs;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  color: $success-dark;
+  font-size: 10px;
+}
+@media (max-width: $breakpoint-sm) {
+  .profileCard {
+    padding: 18px;
+  }
+  .avatarPreview {
+    align-items: flex-start;
+  }
+  .formActions :global(.ant-btn) {
+    width: 100%;
+  }
+  .contactCard dl > div {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .contactCard dd {
+    justify-content: flex-start;
+  }
 }

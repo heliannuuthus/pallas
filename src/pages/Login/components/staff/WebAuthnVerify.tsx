@@ -1,5 +1,6 @@
+import { toast } from '@heliannuuthus/ui/toast';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Button, message } from 'antd';
+import { Button } from 'antd';
 import { ArrowLeftOutlined, KeyOutlined } from '@ant-design/icons';
 import type {
   ChallengeResponse,
@@ -111,7 +112,7 @@ const WebAuthnVerify = ({
     } catch (error) {
       if (isRateLimitError(error)) {
         const info = getRateLimitData(error);
-        message.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
+        toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         setViewState('retry');
         setErrorMessage(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
       } else if (error instanceof Error) {

@@ -45,7 +45,7 @@ export const IRIS_AUTH_CONFIG = {
   /** OAuth 回调路径 */
   callbackPath: '/auth/callback',
   /** 登录后默认跳转路径 */
-  defaultRedirectPath: '/user/profile',
+  defaultRedirectPath: '/u',
 } as const;
 
 /** 获取 OAuth 回调 URI（完整地址） */

@@ -1,8 +1,11 @@
 allowBuilds:
   '@parcel/watcher': true
+  '@heliannuuthus/ui@https://codeload.github.com/heliannuuthus/ui/tar.gz/56447f8f0aa1f04d4d6f333ed89eaeb5c6b850ee': true
   esbuild: true
 
 overrides:
   '@stablelib/ed25519': 2.1.0
   form-data: 4.0.6
   lodash: 4.18.1
+
+storeDir: ~/.pnpm-store

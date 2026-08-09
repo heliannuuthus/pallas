@@ -1,11 +1,12 @@
+import { toast } from '@heliannuuthus/ui/toast';
 /**
- * iris 域名下的安全设置页面（/user/security 子路由）
+ * iris 域名下的安全设置页面（/u/s 子路由）
  *
  * 使用 irisApi（Bearer Token）替代原有的 Cookie API
  */
 
-import { useState, useEffect } from 'react';
-import { Card, Button, message, Modal, Input, QRCode, Spin, Empty } from 'antd';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, Button, Modal, Input, QRCode, Spin, Empty } from 'antd';
 import {
   SafetyOutlined,
   KeyOutlined,
@@ -52,14 +53,8 @@ const IrisSecuritySettings = () => {
 
   const [webauthnLoading, setWebauthnLoading] = useState(false);
 
-  useEffect(() => {
-    loadMFAStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadMFAStatus = async () => {
+  const loadMFAStatus = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getMFAStatus(auth);
       setMfaStatus(data);
     } catch (error: unknown) {
@@ -67,7 +62,26 @@ const IrisSecuritySettings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getMFAStatus(auth)
+      .then((data) => {
+        if (!cancelled) setMfaStatus(data);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) showError(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [auth]);
 
   const handleSetupTOTP = async () => {
     try {
@@ -92,7 +106,7 @@ const IrisSecuritySettings = () => {
         type: 'totp',
         code: totpCode,
       });
-      message.success('TOTP 绑定成功');
+      toast.success('TOTP 绑定成功');
       setTotpModalVisible(false);
       setTotpSetup(null);
       setTotpCode('');
@@ -115,7 +129,7 @@ const IrisSecuritySettings = () => {
       onOk: async () => {
         try {
           await deleteMFA(auth, { type: 'totp' });
-          message.success('TOTP 已删除');
+          toast.success('TOTP 已删除');
           loadMFAStatus();
         } catch (error: unknown) {
           showError(error);
@@ -149,7 +163,7 @@ const IrisSecuritySettings = () => {
       });
 
       if ('success' in finishResponse && finishResponse.success) {
-        message.success('安全密钥添加成功');
+        toast.success('安全密钥添加成功');
         passkeyUserCache.commitPasskeyUserHint(IRIS_AUTH_CONFIG.domainId);
         loadMFAStatus();
       } else {
@@ -176,7 +190,7 @@ const IrisSecuritySettings = () => {
             type: 'webauthn',
             credential_id: credentialId,
           });
-          message.success('安全密钥已删除');
+          toast.success('安全密钥已删除');
           const remaining = webauthnCredentials?.filter(
             (c) => c.credential_id !== credentialId
           );

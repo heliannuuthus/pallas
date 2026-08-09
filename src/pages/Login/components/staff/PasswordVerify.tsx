@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { toast } from '@heliannuuthus/ui/toast';
+import { useState, useCallback, useMemo } from 'react';
+import { Form, Input, Button } from 'antd';
 import {
   ArrowLeftOutlined,
   LockOutlined,
@@ -47,18 +48,15 @@ const PasswordVerify = ({
   const [isLoading, setIsLoading] = useState(false);
   const [_captchaVerified, setCaptchaVerified] = useState(false);
   const [dynamicRequireCaptcha, setDynamicRequireCaptcha] = useState(false);
-  const lastPendingSeqRef = useRef(0);
+  const [lastPendingSeq, setLastPendingSeq] = useState(0);
 
   const needsCaptcha =
     (requiresCaptcha || dynamicRequireCaptcha) && !!captchaConfig;
   const initialView: ViewState = needsCaptcha ? 'captcha' : 'password';
   const [viewState, setViewState] = useState<ViewState>(initialView);
 
-  if (
-    pendingActions.seq !== 0 &&
-    pendingActions.seq !== lastPendingSeqRef.current
-  ) {
-    lastPendingSeqRef.current = pendingActions.seq;
+  if (pendingActions.seq !== 0 && pendingActions.seq !== lastPendingSeq) {
+    setLastPendingSeq(pendingActions.seq);
     if (
       pendingActions.actions.some(
         (a) => captchaConfig && a === captchaConfig.connection
@@ -111,9 +109,7 @@ const PasswordVerify = ({
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          message.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else {
           showError(error);
         }
@@ -131,9 +127,7 @@ const PasswordVerify = ({
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          message.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else {
           onError(error instanceof Error ? error : new Error('登录失败'));
         }

@@ -1,5 +1,6 @@
+import { toast } from '@heliannuuthus/ui/toast';
 import { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { updateProfile } from '@/services/api';
 import { showError } from '@/utils/error';
 import type { UserProfile, UpdateProfileRequest } from '@/types';
@@ -18,7 +19,7 @@ const ProfileInfo = ({ profile, onUpdate }: ProfileInfoProps) => {
     try {
       setLoading(true);
       await updateProfile(values);
-      message.success('资料更新成功');
+      toast.success('资料更新成功');
       onUpdate();
     } catch (error: unknown) {
       showError(error);

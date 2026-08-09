@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { message } from 'antd';
+import { toast } from '@heliannuuthus/ui/toast';
 import type {
   ChallengeResponse,
   LoginResponse,
@@ -103,7 +103,7 @@ const EmailOTPVerify = ({
       if (isRateLimitError(error)) {
         const info = getRateLimitData(error);
         const retryAfter = info?.retryAfter ?? DEFAULT_RETRY_AFTER;
-        message.warning(`请求过于频繁，请 ${retryAfter} 秒后重试`);
+        toast.warning(`请求过于频繁，请 ${retryAfter} 秒后重试`);
         if (info?.challengeId) {
           setEmailOTPChallenge({
             challenge_id: info.challengeId,
@@ -165,12 +165,12 @@ const EmailOTPVerify = ({
               }
             : prev
         );
-        message.success('验证码已发送');
+        toast.success('验证码已发送');
       } catch (error) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
           const retryAfter = info?.retryAfter ?? DEFAULT_RETRY_AFTER;
-          message.warning(`请求过于频繁，请 ${retryAfter} 秒后重试`);
+          toast.warning(`请求过于频繁，请 ${retryAfter} 秒后重试`);
           setEmailOTPChallenge((prev) =>
             prev ? { ...prev, retry_after: retryAfter } : prev
           );
@@ -216,13 +216,13 @@ const EmailOTPVerify = ({
           connection: 'staff',
           principal: email,
         });
-        message.success('验证码已重新发送');
+        toast.success('验证码已重新发送');
       }
     } catch (error) {
       if (isRateLimitError(error)) {
         const info = getRateLimitData(error);
         const retryAfter = info?.retryAfter ?? DEFAULT_RETRY_AFTER;
-        message.warning(`请求过于频繁，请 ${retryAfter} 秒后重试`);
+        toast.warning(`请求过于频繁，请 ${retryAfter} 秒后重试`);
         setEmailOTPChallenge((prev) =>
           prev ? { ...prev, retry_after: retryAfter } : prev
         );
@@ -252,13 +252,13 @@ const EmailOTPVerify = ({
           verifyResponse.required &&
           Object.keys(verifyResponse.required).length > 0
         ) {
-          message.warning('请先完成前置验证');
+          toast.warning('请先完成前置验证');
           setIsLoading(false);
           return;
         }
 
         if (!verifyResponse.verified) {
-          message.error('验证码错误，请重试');
+          toast.error('验证码错误，请重试');
           setIsLoading(false);
           return;
         }
@@ -270,7 +270,7 @@ const EmailOTPVerify = ({
           });
 
           if (!isRedirectAction(delegateResponse)) {
-            message.error('验证失败，请重试');
+            toast.error('验证失败，请重试');
             setIsLoading(false);
             return;
           }
@@ -300,11 +300,9 @@ const EmailOTPVerify = ({
       } catch (error: unknown) {
         if (isRateLimitError(error)) {
           const info = getRateLimitData(error);
-          message.warning(
-            `请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`
-          );
+          toast.warning(`请求过于频繁，请 ${info?.retryAfter || 60} 秒后重试`);
         } else if (isChallengeExpiredError(error)) {
-          message.warning('验证码已过期，请重新发送');
+          toast.warning('验证码已过期，请重新发送');
           handleResend();
         } else if (isPreconditionRequiredError(error)) {
           const authError = error as {

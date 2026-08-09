@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Button } from 'antd';
+import { Button } from '@heliannuuthus/ui/button';
 
 interface PasskeyProps {
   onClick: () => void;
@@ -44,20 +44,17 @@ const Passkey = ({
 
   return (
     <Button
-      type="default"
-      size="large"
-      block
+      variant="outline"
+      size="lg"
       className={className}
       style={buttonStyle}
       onClick={onClick}
       disabled={disabled || loading}
       loading={loading}
-      icon={
-        !loading ? (
-          <PasskeyIcon style={{ width: 20, height: 20, color: '#374151' }} />
-        ) : undefined
-      }
     >
+      {!loading ? (
+        <PasskeyIcon style={{ width: 20, height: 20, color: '#374151' }} />
+      ) : null}
       <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>
         使用指纹或面容登录
       </span>

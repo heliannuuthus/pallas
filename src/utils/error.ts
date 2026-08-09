@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { toast } from '@heliannuuthus/ui/toast';
 import type { AuthError } from '@/types';
 
 /**
@@ -34,7 +34,7 @@ export function getErrorMessage(error: AuthError): string {
  */
 export function showError(error: unknown): void {
   const err = error as AuthError;
-  message.error(getErrorMessage(err));
+  toast.error(getErrorMessage(err));
 }
 
 /**
@@ -42,7 +42,7 @@ export function showError(error: unknown): void {
  */
 export function showWarning(error: unknown): void {
   const err = error as AuthError;
-  message.warning(getErrorMessage(err));
+  toast.warning(getErrorMessage(err));
 }
 
 /**
