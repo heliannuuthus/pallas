@@ -164,7 +164,7 @@ export const initiateIDP = async (
  * 获取用户资料
  */
 export const getProfile = async (): Promise<UserProfile> => {
-  const response = await api.get<UserProfile>('/user/profile');
+  const response = await api.get<UserProfile>('/profile');
   return response.data;
 };
 
@@ -174,7 +174,7 @@ export const getProfile = async (): Promise<UserProfile> => {
 export const updateProfile = async (
   data: UpdateProfileRequest
 ): Promise<UserProfile> => {
-  const response = await api.patch<UserProfile>('/user/profile', data);
+  const response = await api.patch<UserProfile>('/profile', data);
   return response.data;
 };
 
@@ -182,7 +182,7 @@ export const updateProfile = async (
  * 获取 MFA 状态
  */
 export const getMFAStatus = async (): Promise<MFAStatusResponse> => {
-  const response = await api.get<MFAStatusResponse>('/user/mfa');
+  const response = await api.get<MFAStatusResponse>('/mfa');
   return response.data;
 };
 
@@ -192,7 +192,7 @@ export const getMFAStatus = async (): Promise<MFAStatusResponse> => {
 export const setupMFA = async (
   data: SetupMFARequest
 ): Promise<SetupTOTPResponse | SetupWebAuthnBeginResponse> => {
-  const response = await api.post('/user/mfa', data);
+  const response = await api.post('/mfa', data);
   return response.data;
 };
 
@@ -203,7 +203,7 @@ export const completeMFA = async (
   uid: string,
   data: CompleteMFARequest
 ): Promise<{ success: boolean } | SetupWebAuthnFinishResponse> => {
-  const response = await api.post(`/user/mfa/${encodeURIComponent(uid)}`, data);
+  const response = await api.post(`/mfa/${encodeURIComponent(uid)}`, data);
   return response.data;
 };
 
@@ -213,7 +213,7 @@ export const completeMFA = async (
 export const updateMFA = async (
   data: UpdateMFARequest
 ): Promise<{ success: boolean }> => {
-  const response = await api.patch('/user/mfa', data);
+  const response = await api.patch('/mfa', data);
   return response.data;
 };
 
@@ -223,7 +223,7 @@ export const updateMFA = async (
 export const deleteMFA = async (
   data: DeleteMFARequest
 ): Promise<{ success: boolean }> => {
-  const response = await api.delete('/user/mfa', { data });
+  const response = await api.delete('/mfa', { data });
   return response.data;
 };
 
@@ -231,7 +231,7 @@ export const deleteMFA = async (
  * 获取绑定的第三方身份
  */
 export const getIdentities = async (): Promise<{ identities: Identity[] }> => {
-  const response = await api.get('/user/identities');
+  const response = await api.get('/identities');
   return response.data;
 };
 
@@ -241,7 +241,7 @@ export const getIdentities = async (): Promise<{ identities: Identity[] }> => {
 export const unbindIdentity = async (
   idp: string
 ): Promise<{ success: boolean }> => {
-  const response = await api.delete(`/user/identities/${idp}`);
+  const response = await api.delete(`/identities/${idp}`);
   return response.data;
 };
 

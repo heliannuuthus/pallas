@@ -1,8 +1,8 @@
 /**
  * Iris API 服务层
  *
- * iris 域名下使用 aegis-ts 的 Bearer Token 调用后端 /user/* 接口。
- * nginx 会将 iris.heliannuuthus.com/api/* 映射到后端 /user/*。
+ * iris 域名下使用 aegis-ts 的 Bearer Token 调用后端 /api/* 接口。
+ * 网关按域名将 iris.heliannuuthus.com/api/* 原样转发给 Aegis。
  */
 
 import type { WebAuth } from '@heliannuuthus/aegis-ts/web';
