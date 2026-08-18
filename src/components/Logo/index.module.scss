@@ -74,14 +74,6 @@
   filter: drop-shadow(0 4px 12px rgba($primary-color, 0.3));
 }
 
-.shieldBody {
-  transition: all $duration-normal $ease-out;
-}
-
-.shieldHighlight {
-  opacity: 0.6;
-}
-
 // 光晕效果
 .glow {
   position: absolute;
@@ -131,12 +123,6 @@
 }
 
 // 颜色变体
-.default {
-  .shield path:first-child {
-    fill: url(#shieldGradient);
-  }
-}
-
 .light {
   .shield {
     filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.2));
@@ -147,12 +133,6 @@
       rgba(255, 255, 255, 0.2) 0%,
       transparent 70%
     );
-  }
-}
-
-.dark {
-  .shield path:first-child {
-    fill: url(#shieldGradient);
   }
 }
 
