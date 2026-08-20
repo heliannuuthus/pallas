@@ -1,32 +1,25 @@
 <p align="center">
-  <img src="./assets/brand/hero-ice.png" width="256" alt="Pallas emblem suspended in a clear ice block" />
+  <img src="./assets/brand/hero-ice.png" width="256" alt="Pallas logo" />
 </p>
 
 <h1 align="center">Pallas</h1>
 
-<p align="center">
-  <strong>The human-facing authentication experience for Aegis.</strong><br />
-  面向用户的 Aegis 认证与账户安全界面。
-</p>
+Pallas 是 Aegis 面向用户的认证界面。登录、OAuth 授权同意、回调、错误提示、个人资料和账户安全设置，都由它承接。它不碰认证逻辑本身——那些都在 Aegis 后端——Pallas 只负责把这些流程做成一个像样的前端。
 
-## Overview / 项目简介
+Pallas is the human-facing authentication UI for Aegis: login, OAuth consent, callbacks, error presentation, profile, and account-security settings. The auth logic lives in Aegis; Pallas turns those flows into the actual interface.
 
-Pallas provides login, OAuth consent, callback handling, error presentation, profile, privacy, terms, and account-security experiences backed by Aegis.
+## 能力
 
-Pallas 是 Aegis 的认证前端，负责登录、OAuth 授权同意、回调处理、错误展示、个人资料和账户安全体验。
+- 多种身份提供方、Passkey、MFA 与挑战流程
+- OAuth 授权同意与回调处理
+- 个人资料与安全设置
+- 完整的失败态、过期态、重复提交态
 
-## Capabilities
+## 技术栈
 
-- Multiple identity providers, Passkeys, MFA, and challenge flows
-- OAuth consent and redirect handling
-- Profile and security settings
-- Responsive failure, expiration, and repeat-submission states
+React 19、TypeScript、Vite 7、React Router 7、Sass，以及独立仓库发布的 `@heliannuuthus/ui` 组件库。
 
-## Technology
-
-React 19, TypeScript, Vite 7, React Router 7, Sass, Ant Design, and `@heliannuuthus/ui`.
-
-## Development
+## 开发
 
 ```bash
 pnpm install
@@ -37,4 +30,4 @@ pnpm build
 pnpm format:check
 ```
 
-Copy `.env.example` to `.env` before local development. API access stays in `src/services`; authentication flow state remains inside Pallas.
+本地开发前把 `.env.example` 复制成 `.env`。API 访问统一收在 `src/services`；认证流程的状态留在 Pallas 内部。
