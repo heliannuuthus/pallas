@@ -238,17 +238,7 @@ function ConsentPage() {
           </div>
           {/* Aegis Logo */}
           <div className={styles.appIcon}>
-            <svg viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#635BFF" />
-              <path
-                d="M16 8L8 12V20L16 24L24 20V12L16 8Z"
-                stroke="white"
-                strokeWidth="1.5"
-                fill="none"
-              />
-              <circle cx="16" cy="15" r="3" fill="white" />
-              <path d="M14.5 17H17.5V21H14.5V17Z" fill="white" />
-            </svg>
+            <img src="/aegis.svg" alt="Aegis" />
           </div>
         </div>
 
