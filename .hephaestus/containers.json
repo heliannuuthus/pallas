@@ -1,0 +1,7 @@
+[
+  {
+    "image": "ghcr.io/heliantheon/pallas",
+    "context": ".",
+    "dockerfile": "Dockerfile"
+  }
+]
