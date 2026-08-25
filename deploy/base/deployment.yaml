@@ -37,7 +37,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: pallas
-          image: ghcr.io/heliantheon/pallas:unreleased
+          image: ghcr.io/heliantheons/pallas:unreleased
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
