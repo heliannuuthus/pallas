@@ -42,6 +42,6 @@ jobs:
       contents: read
     with:
       version: '${{ needs.ci.outputs.version }}'
-      updates: 'pallas/overlay/release.yaml=ghcr.io/heliantheon/pallas'
+      updates: 'pallas/overlay/release.yaml=ghcr.io/heliantheons/pallas'
     secrets:
       gitops_token: '${{ secrets.GITOPS_TOKEN }}'

@@ -8,6 +8,6 @@ are separated by type below it.
 - `config/` documents build-time configuration. Pallas has no runtime Secret.
 - `ingress/` owns `/` on the Aegis hostname; the Aegis service owns `/api`.
 
-The private `heliantheon/applications` repository pins this contract and owns
+The private `heliantheons/applications` repository pins this contract and owns
 the promoted image in its sibling `overlay/` directory.
 
