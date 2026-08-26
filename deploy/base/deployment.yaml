@@ -26,8 +26,6 @@ spec:
     spec:
       serviceAccountName: pallas
       automountServiceAccountToken: false
-      imagePullSecrets:
-        - name: ghcr-pull
       securityContext:
         runAsNonRoot: true
         runAsUser: 101
@@ -91,4 +89,3 @@ spec:
         - name: nginx-run
           emptyDir:
             sizeLimit: 8Mi
-
