@@ -11,7 +11,7 @@ Pallas 是 Aegis 认证服务的前端界面，负责登录、授权同意、OAu
 - 独立仓库发布的 `@heliannuuthus/ui` 组件库
 - React Router 7
 - Sass
-- `@heliannuuthus/aegis-ts`
+- `@heliantheons/aegis-ts`
 
 ## 目录结构
 

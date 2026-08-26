@@ -5,7 +5,7 @@
  * 网关按域名将 iris.heliannuuthus.com/api/* 原样转发给 Aegis。
  */
 
-import type { WebAuth } from '@heliannuuthus/aegis-ts/web';
+import type { WebAuth } from '@heliantheons/aegis-ts';
 import { IRIS_AUTH_CONFIG, getIrisApiBase } from '@/config/env';
 import type {
   UserProfile,
