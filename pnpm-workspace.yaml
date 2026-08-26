@@ -3,6 +3,9 @@ allowBuilds:
   '@heliannuuthus/ui@https://codeload.github.com/heliannuuthus/ui/tar.gz/56447f8f0aa1f04d4d6f333ed89eaeb5c6b850ee': true
   esbuild: true
 
+minimumReleaseAgeExclude:
+  - '@heliantheons/aegis-ts@1.3.3'
+
 overrides:
   '@stablelib/ed25519': 2.1.0
   form-data: 4.0.6

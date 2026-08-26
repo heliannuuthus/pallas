@@ -7,7 +7,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { WebAuth } from '@heliannuuthus/aegis-ts/web';
+import { WebAuth } from '@heliantheons/aegis-ts';
 import {
   getAegisEndpoint,
   getCallbackUri,
