@@ -310,6 +310,8 @@ export interface ApplicationInfo {
   app_id: string;
   /** 应用名称 */
   name: string;
+  /** 应用品牌与用途说明 */
+  description?: string;
   /** 应用 Logo URL */
   logo_url?: string;
 }
