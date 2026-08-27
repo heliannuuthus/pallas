@@ -572,14 +572,14 @@ const LoginPage = () => {
             <h1
               className={clsx(
                 styles.title,
-                !authContext?.service?.description && styles.noSubtitle
+                !authContext?.application?.description && styles.noSubtitle
               )}
             >
               登录到 {authContext?.application?.name || 'Aegis'}
             </h1>
-            {authContext?.service?.description && (
+            {authContext?.application?.description && (
               <p className={styles.subtitle}>
-                {authContext.service.description}
+                {authContext.application.description}
               </p>
             )}
 
