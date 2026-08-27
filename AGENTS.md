@@ -49,6 +49,7 @@ pnpm format:check
 - Pallas 不得引入 Ant Design、Ant Design Icons 或兼容 facade；图标统一使用 Lucide。
 - 认证流程和 API 状态保留在 `src/`，不得下沉到公共 UI 包。
 - 登录流程涉及安全边界，改动后必须考虑失败态、过期态、重复提交和错误展示。
+- Kubernetes 期望状态只属于私有 `heliantheons/applications` 仓库；本公共仓库只维护应用源码、镜像构建和容器内部配置。
 
 ## 验证 Checklist
 

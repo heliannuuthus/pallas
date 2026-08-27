@@ -42,7 +42,7 @@ jobs:
       contents: read
     with:
       version: '${{ needs.ci.outputs.version }}'
-      updates: 'pallas/overlay/release.yaml=ghcr.io/heliantheons/pallas'
+      updates: 'apps/pallas/release.yaml=ghcr.io/heliantheons/pallas'
       gitops_app_id: '4727462'
     secrets:
       gitops_app_private_key: '${{ secrets.GITOPS_APP_PRIVATE_KEY }}'
