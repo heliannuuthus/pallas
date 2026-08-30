@@ -328,17 +328,34 @@ export interface ServiceInfo {
   name: string;
   /** 服务描述 */
   description?: string;
+  /** 服务 Logo URL */
+  logo_url?: string;
 }
 
 /**
- * Flow 信息（当前认证流程的应用和服务信息）
+ * 单、多 audience 认证上下文共享信息
  */
-export interface AuthContext {
+export interface AuthContextBase {
   /** 应用信息 */
   application?: ApplicationInfo;
+}
+
+/** 单 audience 认证上下文 */
+export interface SingleAudienceAuthContext extends AuthContextBase {
   /** 服务信息 */
   service?: ServiceInfo;
+  services?: never;
 }
+
+/** 多 audience 认证上下文 */
+export interface MultiAudienceAuthContext extends AuthContextBase {
+  /** 已验证且按 service_id 排序的服务信息 */
+  services: ServiceInfo[];
+  service?: never;
+}
+
+/** Flow 信息；具体形态由 service/services 字段决定，不使用模式标记位。 */
+export type AuthContext = SingleAudienceAuthContext | MultiAudienceAuthContext;
 
 // ==================== 用户个人中心 ====================
 

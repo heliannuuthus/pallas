@@ -112,11 +112,91 @@ $bg-color: #f8fafc;
 }
 
 .subtitle {
-  font-size: 14px;
+  margin: 0 0 14px;
   color: #6b7280;
-  text-align: center;
-  margin: 0 0 28px;
+  font-size: 14px;
   line-height: 1.5;
+  text-align: center;
+}
+
+.serviceSummary {
+  margin: 14px 0 28px;
+}
+
+.serviceSummaryLabel {
+  margin: 0 0 10px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.serviceList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.serviceItem {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.serviceLogo,
+.serviceLogoFallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
+.serviceLogo {
+  display: block;
+  object-fit: contain;
+  background: #fff;
+}
+
+.serviceLogoFallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  background: #e5e7eb;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.serviceText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.serviceName,
+.serviceDescription {
+  overflow-wrap: anywhere;
+}
+
+.serviceName {
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.serviceDescription {
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 // ========================================
