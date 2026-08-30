@@ -28,6 +28,7 @@ import type {
   ChallengeResponse,
   AuthError,
   AuthContext,
+  ServiceInfo,
   WebAuthnRequestOptions,
 } from '@/types';
 import IDPButton from './components/IDPButton';
@@ -47,6 +48,50 @@ import {
   performConditionalMediation,
 } from './components/WebAuthn/utils';
 import styles from './index.module.scss';
+
+interface ServiceAccessSummaryProps {
+  services: ServiceInfo[];
+  multiple: boolean;
+}
+
+const ServiceAccessSummary = ({
+  services,
+  multiple,
+}: ServiceAccessSummaryProps) => (
+  <section className={styles.serviceSummary} aria-labelledby="service-summary">
+    <p id="service-summary" className={styles.serviceSummaryLabel}>
+      {multiple ? '此应用将使用以下服务' : '此应用将使用该服务'}
+    </p>
+    <div className={styles.serviceList}>
+      {services.map((service) => (
+        <div className={styles.serviceItem} key={service.service_id}>
+          {service.logo_url ? (
+            <img
+              src={service.logo_url}
+              alt=""
+              width={36}
+              height={36}
+              className={styles.serviceLogo}
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <span className={styles.serviceLogoFallback} aria-hidden="true">
+              {service.name.slice(0, 1).toUpperCase()}
+            </span>
+          )}
+          <span className={styles.serviceText}>
+            <strong className={styles.serviceName}>{service.name}</strong>
+            {service.description ? (
+              <span className={styles.serviceDescription}>
+                {service.description}
+              </span>
+            ) : null}
+          </span>
+        </div>
+      ))}
+    </div>
+  </section>
+);
 
 const LoginPage = () => {
   const location = useLocation();
@@ -68,6 +113,14 @@ const LoginPage = () => {
   // 安全验证遮罩状态
   const [showSecurityMask, setShowSecurityMask] = useState(false);
   const authDomainId = authContext?.application?.domain_id;
+  const isMultiAudience = authContext ? 'services' in authContext : false;
+  const requestedServices = authContext
+    ? 'services' in authContext
+      ? (authContext.services ?? [])
+      : authContext.service
+        ? [authContext.service]
+        : []
+    : [];
   const cachedUser = useMemo(
     () => (authDomainId ? passkeyUserCache.get(authDomainId) : null),
     [authDomainId]
@@ -572,7 +625,9 @@ const LoginPage = () => {
             <h1
               className={clsx(
                 styles.title,
-                !authContext?.application?.description && styles.noSubtitle
+                !authContext?.application?.description &&
+                  requestedServices.length === 0 &&
+                  styles.noSubtitle
               )}
             >
               登录到 {authContext?.application?.name || 'Aegis'}
@@ -582,6 +637,12 @@ const LoginPage = () => {
                 {authContext.application.description}
               </p>
             )}
+            {requestedServices.length > 0 ? (
+              <ServiceAccessSummary
+                services={requestedServices}
+                multiple={isMultiAudience}
+              />
+            ) : null}
 
             {/* 登录内容 */}
             <div className={styles.content}>

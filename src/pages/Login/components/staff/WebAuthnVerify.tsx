@@ -46,10 +46,7 @@ const WebAuthnVerify = ({
   const hasInitiatedRef = useRef(false);
 
   const performWebAuthnLogin = useCallback(async () => {
-    if (
-      !authContext?.application?.app_id ||
-      !authContext?.service?.service_id
-    ) {
+    if (!authContext?.application?.app_id) {
       onError(new Error('认证上下文不完整'));
       onBack();
       return;

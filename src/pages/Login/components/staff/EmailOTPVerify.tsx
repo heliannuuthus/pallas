@@ -62,10 +62,7 @@ const EmailOTPVerify = ({
   const hasInitiatedRef = useRef(false);
 
   const initiateOTP = useCallback(async () => {
-    if (
-      !authContext?.application?.app_id ||
-      !authContext?.service?.service_id
-    ) {
+    if (!authContext?.application?.app_id) {
       onError(new Error('认证上下文不完整'));
       return;
     }
@@ -186,8 +183,7 @@ const EmailOTPVerify = ({
   );
 
   const handleResend = useCallback(async () => {
-    if (!authContext?.application?.app_id || !authContext?.service?.service_id)
-      return;
+    if (!authContext?.application?.app_id) return;
 
     setIsLoading(true);
     try {
